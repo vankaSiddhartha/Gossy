@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Gossy</string>
+    <string name="get_started">Get started</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="already_have_an_account_log_in">Already have an account ? Log in</string>
+    <string name="logoforauth">logoForAuth</string>
+</resources>
