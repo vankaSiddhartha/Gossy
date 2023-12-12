@@ -31,7 +31,9 @@ private lateinit var binding: ActivityGenderChooseFragmentBinding
             storeGender("nonBinary")
         }
         binding.back.setOnClickListener {
-            intentFragment(R.id.fragment_container,DOBYearPickerFragment(),requireContext())
+            // Inside the fragment
+            requireActivity().supportFragmentManager.popBackStack()
+
         }
 
         return binding.root

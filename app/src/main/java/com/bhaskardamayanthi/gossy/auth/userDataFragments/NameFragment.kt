@@ -1,5 +1,6 @@
 package com.bhaskardamayanthi.gossy.auth.userDataFragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -10,6 +11,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import cn.pedant.SweetAlert.SweetAlertDialog
 import com.bhaskardamayanthi.gossy.R
+import com.bhaskardamayanthi.gossy.auth.WelcomeAccountActivity
 import com.bhaskardamayanthi.gossy.databinding.FragmentNameBinding
 import com.bhaskardamayanthi.gossy.localStore.StoreManager
 
@@ -50,6 +52,9 @@ private lateinit var binding:FragmentNameBinding
                 }
             }
         })
+        binding.back.setOnClickListener {
+            startActivity(Intent(requireContext(), WelcomeAccountActivity::class.java))
+        }
 
         return binding.root
 
@@ -61,12 +66,13 @@ private lateinit var binding:FragmentNameBinding
         {
             storeManager.saveString("name",name)
             storeManager.saveBoolean("new",true)
+            navigateToNextFragment(DOBYearPickerFragment())
 
         }else{
             SweetAlertDialog(context, SweetAlertDialog.ERROR_TYPE).setTitleText("Oops...")
                 .setContentText("Fill the name").show()
         }
-        navigateToNextFragment(DOBYearPickerFragment())
+
     }
     fun navigateToNextFragment(nextFragment:Fragment) {
          // Replace NextFragment with the actual name of your next fragment

@@ -10,6 +10,7 @@ import com.bhaskardamayanthi.gossy.R
 import com.bhaskardamayanthi.gossy.aiNamesAndImage.AiImage
 import com.bhaskardamayanthi.gossy.aiNamesAndImage.AiNames
 import com.bhaskardamayanthi.gossy.auth.PhoneAuthActivity
+import com.bhaskardamayanthi.gossy.auth.WelcomeAccountActivity
 import com.bhaskardamayanthi.gossy.databinding.FragmentAIFaceBinding
 import com.bhaskardamayanthi.gossy.localStore.StoreManager
 import com.bumptech.glide.Glide
@@ -36,6 +37,9 @@ private lateinit var saveFakeProfile:String
             storeManager.saveString("fakeName",saveFakeName)
             storeManager.saveString("fakeImg",saveFakeProfile)
             startActivity(Intent(requireContext(),PhoneAuthActivity::class.java))
+        }
+        binding.back.setOnClickListener {
+            requireActivity().supportFragmentManager.popBackStack()
         }
 
         return binding.root

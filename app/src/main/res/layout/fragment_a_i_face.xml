@@ -51,13 +51,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:padding="10dp"
-        android:text="AI generated profile"
+        android:gravity="center"
+      android:padding="10dp"
+        android:text="Welcome to Vankaverse, a universe with no restrictions. It's a new life with a new name and a new look."
         android:textColor="@color/black"
-        android:textSize="30sp"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/ai_fake_profle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/back" />
+        app:layout_constraintTop_toBottomOf="@+id/back"
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/textView17"

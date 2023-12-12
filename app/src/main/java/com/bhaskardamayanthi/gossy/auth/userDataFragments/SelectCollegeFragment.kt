@@ -86,11 +86,9 @@ private lateinit var list:List<CollageModel>
         // Fetch data from Firebase
         chooseCollageviewModel.fetchData()
         binding.back.setOnClickListener {
-            FragmentIntentManager.intentFragment(
-                R.id.fragment_container,
-                NameFragment(),
-                requireContext()
-            )
+            // Inside the fragment
+            requireActivity().supportFragmentManager.popBackStack()
+
         }
 
 

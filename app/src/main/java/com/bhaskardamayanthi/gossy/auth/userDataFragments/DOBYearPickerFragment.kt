@@ -42,7 +42,9 @@ binding.upload.setOnClickListener {
     navigateToNextFragment(GenderChooseFragment())
 }
 binding.back.setOnClickListener {
-    intentFragment(R.id.fragment_container,NameFragment(),requireContext())
+    // Inside the fragment
+    requireActivity().supportFragmentManager.popBackStack()
+
 }
 
         return binding.root
@@ -55,5 +57,6 @@ binding.back.setOnClickListener {
         transaction.addToBackStack(null) // Optional: Add transaction to back stack to enable back navigation
         transaction.commit()
     }
+
 
 }
