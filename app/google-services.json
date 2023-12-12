@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "981903549611",
+    "project_id": "gossy-fbbcf",
+    "storage_bucket": "gossy-fbbcf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:981903549611:android:2805b9e40495543757c3ee",
+        "android_client_info": {
+          "package_name": "com.bhaskardamayanthi.gossy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAjXNaEF6qwSDEglQiYK8SuRZ9rBzMf1no"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

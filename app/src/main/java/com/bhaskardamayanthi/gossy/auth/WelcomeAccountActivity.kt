@@ -1,6 +1,8 @@
 package com.bhaskardamayanthi.gossy.auth
 
 
+import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
@@ -20,19 +22,31 @@ class WelcomeAccountActivity : AppCompatActivity() {
         binding = ActivityWelcomeAccountBinding.inflate(layoutInflater)
         setContentView(binding.root)
       val textView =binding.loginText
+        val blueColor = ForegroundColorSpan(Color.BLUE)
         val spannableString = SpannableString(textView.text)
-        val blueColor = ForegroundColorSpan(
-            ContextCompat.getColor(
-                this,
-                R.color.btnBlue
-            )
-        ) // Replace R.color.blue with your desired blue color resource
 
+// Privacy Policy
+        val privacyPolicyText = "Privacy policy"
+        val privacyPolicyStartIndex = spannableString.indexOf(privacyPolicyText)
+        val privacyPolicyEndIndex = privacyPolicyStartIndex + privacyPolicyText.length
+        if (privacyPolicyStartIndex != -1) {
+            spannableString.setSpan(blueColor, privacyPolicyStartIndex, privacyPolicyEndIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        }
 
-        val startIndex = textView.text.toString().indexOf("Log in")
-        val endIndex = startIndex + "Log in".length
-        spannableString.setSpan(blueColor, startIndex, endIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+// Terms of Service
+        val termsOfServiceText = "terms of service"
+        val termsOfServiceStartIndex = spannableString.indexOf(termsOfServiceText)
+        val termsOfServiceEndIndex = termsOfServiceStartIndex + termsOfServiceText.length
+        if (termsOfServiceStartIndex != -1) {
+            spannableString.setSpan(blueColor, termsOfServiceStartIndex, termsOfServiceEndIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        }
 
         textView.text = spannableString
+        binding.loginText.setOnClickListener {
+            startActivity(Intent(this,PermissionActivity::class.java))
+        }
+        binding.upload.setOnClickListener {
+            startActivity(Intent(this,UserDataActivity::class.java))
+        }
     }
 }

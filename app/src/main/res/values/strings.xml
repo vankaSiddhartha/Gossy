@@ -4,4 +4,27 @@
     <string name="sign_up">Sign Up</string>
     <string name="already_have_an_account_log_in">Already have an account ? Log in</string>
     <string name="logoforauth">logoForAuth</string>
+    <string name="back">back</string>
+    <string name="contiText">Continue</string>
+    <string name="tap_allowed_when_prompted">Tap Allowed when prompted</string>
+    <string name="please_grant_the_necessary_permissions">Please grant the necessary permissions</string>
+    <string name="permissionimg">permissionImg</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="create_account">Create Account</string>
+    <string name="by_tapping_continue_you_acknowledge_that_you_have_read_the_privacy_policy_and_agree_to_the_terms_of_service">By tapping continue you acknowledge that you have read the Privacy policy and agree to the terms of service</string>
+    <string name="name">Name</string>
+    <string name="eg_siddhartha">eg Siddhartha</string>
+    <string name="step_1_of_5">Step 1 of 5</string>
+    <string name="your_gender_is">Your gender is</string>
+    <string name="you_were_born_in">You were born in</string>
+    <string name="please_wait">Please wait</string>
+    <string name="select_collage">Select college</string>
+    <string name="loading">Loading</string>
+    <string name="step_5_of_5">Step 5 of 5</string>
+    <string name="india">India</string>
+    <string name="eg_9876543211">eg: 9876543211</string>
+    <string name="country">Country</string>
+    <string name="phone_number">Phone number</string>
+    <string name="we_ll_send_you_a_verification_code">we\'ll send you a verification code</string>
 </resources>
