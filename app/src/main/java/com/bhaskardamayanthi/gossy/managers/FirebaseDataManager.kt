@@ -3,6 +3,7 @@ package com.bhaskardamayanthi.gossy.managers
 import android.content.Context
 import android.content.Intent
 import cn.pedant.SweetAlert.SweetAlertDialog
+import com.bhaskardamayanthi.gossy.MainActivity
 import com.bhaskardamayanthi.gossy.auth.PermissionActivity
 import com.bhaskardamayanthi.gossy.loading.Loading.dismissDialogForLoading
 import com.bhaskardamayanthi.gossy.loading.Loading.showAlertDialogForLoading
@@ -26,17 +27,17 @@ class FirebaseDataManager {
         usersRef.child(userId).setValue(user)
             .addOnSuccessListener {
                 dismissDialogForLoading()
-                SweetAlertDialog(
-                    context,
-                    SweetAlertDialog.SUCCESS_TYPE
-                ).setTitleText("Good job!").setContentText("successful").setConfirmClickListener { sDialog -> // Showing simple toast message to user
-                    sDialog.dismissWithAnimation()
-                  //  startActivity(Intent(this, MainActivity::class.java))
-                }.setConfirmClickListener { sDialog ->
-                    sDialog.dismissWithAnimation()
-                  //  context.startActivity(Intent(context, LoginActivity::class.java))
-
-                }.show()
+//                SweetAlertDialog(
+//                    context,
+//                    SweetAlertDialog.SUCCESS_TYPE
+//                ).setTitleText("Good job!").setContentText("successful").setConfirmClickListener { sDialog -> // Showing simple toast message to user
+//                    sDialog.dismissWithAnimation()
+                    context.startActivity(Intent(context, MainActivity::class.java))
+//                }.setConfirmClickListener { sDialog ->
+//                    sDialog.dismissWithAnimation()
+//                  //  context.startActivity(Intent(context, LoginActivity::class.java))
+//
+//                }.show()
             }
             .addOnFailureListener {
                 dismissDialogForLoading()

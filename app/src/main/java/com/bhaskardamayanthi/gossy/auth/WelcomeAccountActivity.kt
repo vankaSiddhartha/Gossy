@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.bhaskardamayanthi.gossy.R
 import com.bhaskardamayanthi.gossy.databinding.ActivityWelcomeAccountBinding
+import com.bhaskardamayanthi.gossy.managers.TokenManager
 
 
 class WelcomeAccountActivity : AppCompatActivity() {
@@ -19,8 +20,11 @@ class WelcomeAccountActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setTheme(androidx.appcompat.R.style.Theme_AppCompat)
         supportActionBar?.hide()
+
         binding = ActivityWelcomeAccountBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        val token = TokenManager(this)
+        token.saveTokenLocally()
       val textView =binding.loginText
         val blueColor = ForegroundColorSpan(Color.BLUE)
         val spannableString = SpannableString(textView.text)
@@ -46,7 +50,7 @@ class WelcomeAccountActivity : AppCompatActivity() {
             startActivity(Intent(this,PermissionActivity::class.java))
         }
         binding.upload.setOnClickListener {
-            startActivity(Intent(this,UserDataActivity::class.java))
+            startActivity(Intent(this,PhoneAuthActivity::class.java))
         }
     }
 }

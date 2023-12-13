@@ -23,7 +23,7 @@ class FetchDataLoadingActivity : AppCompatActivity() {
         val userId = FirebaseAuth.getInstance().currentUser?.phoneNumber
         val firebaseDataManager =FirebaseDataManager()
         val token =TokenManager(this)
-        token.saveTokenLocally()
+
         if (storeManager.getBoolean("new",false)){
 
             val name = storeManager.getString("name","")
@@ -32,14 +32,14 @@ class FetchDataLoadingActivity : AppCompatActivity() {
             val fakeImg = storeManager.getString("fakeImg","")
             val dob = storeManager.getString("dobYear","")
             val collegeName = storeManager.getString("college","")
-            val fcmToken =storeManager.getString(token.getSavedToken().toString(),"")
+            val fcmToken =token.getSavedToken().toString()
+            val phoneNumber = storeManager.getString("number","")
 
-            val newUserData = UserModel(collegeName,sex,name,userId,"",dob,fakeName,fakeImg,fcmToken)
-             firebaseDataManager.uploadUserToDatabase(userId.toString(),newUserData,this)
+            val newUserData = UserModel(collegeName,sex,name,phoneNumber,"",dob,fakeName,fakeImg,fcmToken)
+             firebaseDataManager.uploadUserToDatabase(phoneNumber,newUserData,this)
             Toast.makeText(this, userId.toString(), Toast.LENGTH_SHORT).show()
 
 
-           // firebaseDataManager.uploadUserToDatabase(userId.toString(),)
         }else{
 
         }

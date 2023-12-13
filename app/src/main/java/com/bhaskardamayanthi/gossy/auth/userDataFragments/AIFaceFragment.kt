@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import com.bhaskardamayanthi.gossy.R
 import com.bhaskardamayanthi.gossy.aiNamesAndImage.AiImage
 import com.bhaskardamayanthi.gossy.aiNamesAndImage.AiNames
+import com.bhaskardamayanthi.gossy.auth.FetchDataLoadingActivity
 import com.bhaskardamayanthi.gossy.auth.PhoneAuthActivity
 import com.bhaskardamayanthi.gossy.auth.WelcomeAccountActivity
 import com.bhaskardamayanthi.gossy.databinding.FragmentAIFaceBinding
@@ -36,7 +37,7 @@ private lateinit var saveFakeProfile:String
         binding.upload.setOnClickListener {
             storeManager.saveString("fakeName",saveFakeName)
             storeManager.saveString("fakeImg",saveFakeProfile)
-            startActivity(Intent(requireContext(),PhoneAuthActivity::class.java))
+            startActivity(Intent(requireContext(),FetchDataLoadingActivity::class.java))
         }
         binding.back.setOnClickListener {
             requireActivity().supportFragmentManager.popBackStack()

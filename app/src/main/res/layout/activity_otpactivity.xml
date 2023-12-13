@@ -6,95 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".auth.OTPActivity">
 
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <EditText
-
-            android:id="@+id/editTextDigit1"
-            android:hint="."
-            android:layout_width="48dp"
-            android:layout_height="50dp"
-            android:layout_marginEnd="10dp"
-            android:layout_weight="1"
-            android:background="@drawable/edit_text_bg"
-            android:inputType="number"
-            android:maxLength="1"
-            android:textAlignment="center" />
-
-        <EditText
-            android:id="@+id/editTextDigit2"
-            android:layout_width="48dp"
-            android:layout_height="50dp"
-            android:hint="."
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_weight="1"
-            android:background="@drawable/edit_text_bg"
-            android:inputType="number"
-            android:maxLength="1"
-            android:textAlignment="center" />
-
-        <EditText
-            android:id="@+id/editTextDigit3"
-            android:layout_width="48dp"
-            android:hint="."
-            android:layout_height="50dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_weight="1"
-            android:background="@drawable/edit_text_bg"
-            android:inputType="number"
-            android:maxLength="1"
-            android:textAlignment="center" />
-
-        <EditText
-            android:id="@+id/editTextDigit4"
-            android:layout_width="48dp"
-            android:hint="."
-            android:layout_height="50dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_weight="1"
-            android:background="@drawable/edit_text_bg"
-            android:inputType="number"
-            android:maxLength="1"
-            android:textAlignment="center" />
-
-        <EditText
-            android:id="@+id/editTextDigit5"
-            android:layout_width="48dp"
-            android:layout_height="50dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_weight="1"
-            android:background="@drawable/edit_text_bg"
-            android:inputType="number"
-            android:hint="."
-            android:maxLength="1"
-            android:textAlignment="center" />
-
-        <EditText
-            android:id="@+id/editTextDigit6"
-            android:layout_width="48dp"
-            android:layout_height="50dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_weight="1"
-            android:background="@drawable/edit_text_bg"
-            android:inputType="number"
-            android:maxLength="1"
-            android:hint="."
-            android:textAlignment="center" />
-    </LinearLayout>
 
     <TextView
         android:id="@+id/textView9"
@@ -105,8 +16,8 @@
         android:textColor="@color/black"
         android:textSize="25sp"
         app:layout_constraintBottom_toTopOf="@+id/textView10"
-        app:layout_constraintEnd_toEndOf="@+id/linearLayout"
-        app:layout_constraintStart_toStartOf="@+id/linearLayout"
+        app:layout_constraintEnd_toEndOf="@+id/otp_et"
+        app:layout_constraintStart_toStartOf="@+id/otp_et"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0" />
 
@@ -121,15 +32,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/baseline_arrow_back_ios_new_24" />
+
     <TextView
         android:id="@+id/textView10"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
         android:gravity="center"
+        android:layout_marginBottom="10dp"
         android:text="Enter the code we sent to 1234567890"
         android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintBottom_toTopOf="@+id/otp_et"
         app:layout_constraintEnd_toEndOf="@+id/textView9"
         app:layout_constraintStart_toStartOf="@+id/textView9" />
 
@@ -158,5 +70,20 @@
             android:textSize="20sp"
             android:textStyle="bold" />
     </androidx.cardview.widget.CardView>
+
+    <EditText
+        android:id="@+id/otp_et"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@drawable/edit_text_bg"
+        android:layout_margin="20dp"
+        android:hint="otp"
+        android:paddingStart="10dp"
+        android:ems="10"
+        android:inputType="number"
+        app:layout_constraintBottom_toTopOf="@+id/upload"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/back" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

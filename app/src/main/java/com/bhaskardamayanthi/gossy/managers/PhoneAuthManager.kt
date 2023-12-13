@@ -7,6 +7,7 @@ import androidx.cardview.widget.CardView
 import cn.pedant.SweetAlert.SweetAlertDialog
 import com.bhaskardamayanthi.gossy.loading.Loading.dismissDialogForLoading
 import com.bhaskardamayanthi.gossy.loading.Loading.showAlertDialogForLoading
+import com.bhaskardamayanthi.gossy.localStore.StoreManager
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PhoneAuthCredential
@@ -28,7 +29,7 @@ class PhoneAuthManager(private val context: Context) {
             object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
                 override fun onVerificationCompleted(phoneAuthCredential: PhoneAuthCredential) {
                     // Automatically handle verification if the device is able to receive SMS
-                    signInWithPhoneAuthCredential(phoneAuthCredential)
+                  //  signInWithPhoneAuthCredential(phoneAuthCredential)
                 }
 
                 override fun onVerificationFailed(e: FirebaseException) {
@@ -54,7 +55,7 @@ class PhoneAuthManager(private val context: Context) {
             .setCallbacks(object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
                 override fun onVerificationCompleted(phoneAuthCredential: PhoneAuthCredential) {
                     // Automatically handle verification if the device is able to receive SMS
-                    signInWithPhoneAuthCredential(phoneAuthCredential)
+                    signInWithPhoneAuthCredential(phoneAuthCredential,phoneNumber)
 
                 }
 
@@ -78,18 +79,20 @@ class PhoneAuthManager(private val context: Context) {
     }
 
 
-    fun verifyOTP(otp: String) {
+    fun verifyOTP(otp: String,phoneNumber: String) {
         val credential = PhoneAuthProvider.getCredential(verificationId, otp)
-        signInWithPhoneAuthCredential(credential)
+        signInWithPhoneAuthCredential(credential,phoneNumber)
     }
 
-    private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential) {
+    private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential,phoneNumber: String) {
+        val storeManager = StoreManager(context)
         mAuth.signInWithCredential(credential)
             .addOnCompleteListener(context as Activity) { task ->
                 if (task.isSuccessful) {
                     // Sign in success
                    // Toast.makeText(context, "Authentication Successful", Toast.LENGTH_SHORT).show()
-                    SweetAlertDialog(context, SweetAlertDialog.SUCCESS_TYPE).setTitleText("Oops...")
+                    storeManager.saveString("number",phoneNumber.toString())
+                    SweetAlertDialog(context, SweetAlertDialog.SUCCESS_TYPE).setTitleText("Great")
                         .setContentText( "Authentication Successful").show()
                 } else {
                     // If sign in fails, display a message to the user.
