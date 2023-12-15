@@ -17,6 +17,7 @@ import com.bhaskardamayanthi.gossy.adapter.AnonymousPostAdapter
 import com.bhaskardamayanthi.gossy.databinding.FragmentReplyBinding
 import com.bhaskardamayanthi.gossy.localStore.StoreManager
 import com.bhaskardamayanthi.gossy.managers.FirebaseDataManager
+import com.bhaskardamayanthi.gossy.managers.FragmentIntentManager
 import com.bhaskardamayanthi.gossy.viewModel.ReplyFragmentViewModel
 import com.bhaskardamayanthi.gossy.viewModel.ShareDataInFragmentViewModel
 import com.bumptech.glide.Glide
@@ -27,6 +28,7 @@ class ReplyFragment : Fragment() {
 
 private lateinit var binding:FragmentReplyBinding
     private lateinit var viewModel:ReplyFragmentViewModel
+    private lateinit var shareDataInFragmentViewModel: ShareDataInFragmentViewModel
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -34,6 +36,20 @@ private lateinit var binding:FragmentReplyBinding
         viewModel = ViewModelProvider(requireActivity())[ReplyFragmentViewModel::class.java]
         val shareDataInFragmentViewModel = ViewModelProvider(requireActivity())[ShareDataInFragmentViewModel::class.java]
         binding = FragmentReplyBinding.inflate(layoutInflater,container,false)
+        val postId = arguments?.getString("id")
+        binding.commentBtn.setOnClickListener {
+            val commentFragment = CommentFragment()
+            shareDataInFragmentViewModel.sharedData.value = binding.userName.text.toString()
+            shareDataInFragmentViewModel.getParentPostId.value = postId
+            //     commentFragment.show((context as AppCompatActivity).supportFragmentManager,"Comments")
+
+            //  val bundle = Bundle()
+            //    bundle.putString("userName", name) // Replace "YourDataHere" with the actual data
+
+            //  commentFragment.arguments = bundle
+
+            FragmentIntentManager.intentFragment(R.id.frag, commentFragment, requireContext(), "comment")
+        }
 
 
         val firebaseDataManager = FirebaseDataManager()
@@ -49,7 +65,7 @@ private lateinit var binding:FragmentReplyBinding
         binding.time.text = arguments?.getString("time")
         val checked = arguments?.getBoolean("isLike")?:false
       //  Toast.makeText(requireContext(), checked.toString(), Toast.LENGTH_SHORT).show()
-        val postId = arguments?.getString("id")
+
         binding.likeBtn.isChecked = checked
         viewModel.fetchDataForPost(postId.toString())
 
