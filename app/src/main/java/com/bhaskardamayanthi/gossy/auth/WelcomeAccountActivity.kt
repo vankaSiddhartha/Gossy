@@ -7,11 +7,13 @@ import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import com.bhaskardamayanthi.gossy.R
+import com.bhaskardamayanthi.gossy.MainActivity
 import com.bhaskardamayanthi.gossy.databinding.ActivityWelcomeAccountBinding
+import com.bhaskardamayanthi.gossy.localStore.StoreManager
 import com.bhaskardamayanthi.gossy.managers.TokenManager
+import com.google.firebase.auth.FirebaseAuth
 
 
 class WelcomeAccountActivity : AppCompatActivity() {
@@ -51,6 +53,16 @@ class WelcomeAccountActivity : AppCompatActivity() {
         }
         binding.upload.setOnClickListener {
             startActivity(Intent(this,PhoneAuthActivity::class.java))
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val storeManager = StoreManager(this)
+        val isLog = storeManager.getString("number","0")
+        if (isLog !="0") {
+            startActivity(Intent(this, MainActivity::class.java))
+            finishAffinity()
         }
     }
 }

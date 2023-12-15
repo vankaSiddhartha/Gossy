@@ -32,7 +32,7 @@ class FirebaseDataManager {
 //                    SweetAlertDialog.SUCCESS_TYPE
 //                ).setTitleText("Good job!").setContentText("successful").setConfirmClickListener { sDialog -> // Showing simple toast message to user
 //                    sDialog.dismissWithAnimation()
-                    context.startActivity(Intent(context, MainActivity::class.java))
+                    context.startActivity(Intent(context, PermissionActivity::class.java))
 //                }.setConfirmClickListener { sDialog ->
 //                    sDialog.dismissWithAnimation()
 //                  //  context.startActivity(Intent(context, LoginActivity::class.java))
@@ -56,18 +56,19 @@ class FirebaseDataManager {
         usersRef.child(post.id!!).setValue(post)
             .addOnSuccessListener {
                 dismissDialogForLoading()
-//                SweetAlertDialog(
-//                    context,
-//                    SweetAlertDialog.SUCCESS_TYPE
-//                ).setTitleText("Good job!").setContentText("successful").setConfirmClickListener { sDialog -> // Showing simple toast message to user
-//                    sDialog.dismissWithAnimation()
-//                    //  startActivity(Intent(this, MainActivity::class.java))
-//                }.setConfirmClickListener { sDialog ->
-//                    sDialog.dismissWithAnimation()
-////                    context.startActivity(Intent(context, LoginActivity::class.java))
-//
-//                }.show()
-                context.startActivity(Intent(context,PermissionActivity::class.java))
+                SweetAlertDialog(
+                    context,
+                    SweetAlertDialog.SUCCESS_TYPE
+                ).setTitleText("Good job!").setContentText("successful").setConfirmClickListener { sDialog -> // Showing simple toast message to user
+                    sDialog.dismissWithAnimation()
+                    //  startActivity(Intent(this, MainActivity::class.java))
+                }.setConfirmClickListener { sDialog ->
+                    sDialog.dismissWithAnimation()
+//                    context.startActivity(Intent(context, LoginActivity::class.java))
+                    context.startActivity(Intent(context,MainActivity::class.java))
+
+                }.show()
+
             }
             .addOnFailureListener {
                 dismissDialogForLoading()
@@ -76,4 +77,11 @@ class FirebaseDataManager {
                     .setContentText(it.toString()).show()
             }
     }
+    fun likePost(id:String,userId: String){
+        DATABASE.child("likes").child(id).child(userId).setValue(userId)
+    }
+    fun disLike(id:String,userId: String){
+        DATABASE.child("likes").child(id).child(userId).removeValue()
+    }
+
 }

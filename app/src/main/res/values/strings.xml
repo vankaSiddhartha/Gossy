@@ -27,4 +27,16 @@
     <string name="country">Country</string>
     <string name="phone_number">Phone number</string>
     <string name="we_ll_send_you_a_verification_code">we\'ll send you a verification code</string>
+    <string name="home">Home</string>
+    <string name="polls">Polls</string>
+    <string name="upload_post">Upload Post</string>
+    <string name="notifications">Notifications</string>
+    <string name="account">Account</string>
+    <string name="profile">profile</string>
+    <string name="dots">.........</string>
+    <string name="like">Like</string>
+    <string name="comment">Comment</string>
+    <string name="section">Section</string>
+    <string name="what_s_happening">What\'s happening?</string>
+    <string name="search">Search</string>
 </resources>

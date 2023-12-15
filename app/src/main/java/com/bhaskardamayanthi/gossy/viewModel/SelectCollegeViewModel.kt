@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class SelectCollegeViewModel:ViewModel() {
-    val databaseReference = Firebase.database("https://gossy-fbbcf-default-rtdb.asia-southeast1.firebasedatabase.app/").reference.child("college")
+  private  val databaseReference = Firebase.database("https://gossy-fbbcf-default-rtdb.asia-southeast1.firebasedatabase.app/").reference.child("college")
     private val _collageData: MutableLiveData<List<CollageModel>> = MutableLiveData()
     val collageData: LiveData<List<CollageModel>> = _collageData
     private val _loadingStatus: MutableLiveData<Boolean> = MutableLiveData()

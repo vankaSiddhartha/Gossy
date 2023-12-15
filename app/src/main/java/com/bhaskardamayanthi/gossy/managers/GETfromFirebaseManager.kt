@@ -25,5 +25,21 @@ class GETfromFirebaseManager {
 
         })
     }
+    fun getLikeCount(id: String, callback: (Long) -> Unit) {
+        val DATABASE = Firebase.database("https://gossy-fbbcf-default-rtdb.asia-southeast1.firebasedatabase.app/").reference
+        val likesRef = DATABASE.child("likes").child(id)
+
+        likesRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val count = snapshot.childrenCount
+                callback(count) // Pass the count to the callback function
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Handle errors if any
+            }
+        })
+    }
+
 
 }
