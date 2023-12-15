@@ -83,5 +83,35 @@ class FirebaseDataManager {
     fun disLike(id:String,userId: String){
         DATABASE.child("likes").child(id).child(userId).removeValue()
     }
+    fun postComment( postId: String,post: PostModel, context: Context){
+        showAlertDialogForLoading(context)
+        // Assuming you have a "users" node in your database
+        val usersRef = DATABASE.child("comments")
+
+        // Set the user object under the user's ID node
+        usersRef.child(postId).child(post.id.toString()).setValue(post)
+            .addOnSuccessListener {
+                dismissDialogForLoading()
+                SweetAlertDialog(
+                    context,
+                    SweetAlertDialog.SUCCESS_TYPE
+                ).setTitleText("Good job!").setContentText("successful").setConfirmClickListener { sDialog -> // Showing simple toast message to user
+                    sDialog.dismissWithAnimation()
+                    //  startActivity(Intent(this, MainActivity::class.java))
+                }.setConfirmClickListener { sDialog ->
+                    sDialog.dismissWithAnimation()
+//                    context.startActivity(Intent(context, LoginActivity::class.java))
+                    context.startActivity(Intent(context,MainActivity::class.java))
+
+                }.show()
+
+            }
+            .addOnFailureListener {
+                dismissDialogForLoading()
+                // Handle failed upload
+                SweetAlertDialog(context, SweetAlertDialog.ERROR_TYPE).setTitleText("Oops...")
+                    .setContentText(it.toString()).show()
+            }
+    }
 
 }

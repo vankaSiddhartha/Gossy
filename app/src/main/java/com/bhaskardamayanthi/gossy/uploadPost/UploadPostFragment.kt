@@ -47,13 +47,12 @@ private lateinit var binding:FragmentUploadPostBinding
         val number = storeManager.getString("number","0")
 
 
-        binding.buttonPost.setOnClickListener {
-            if (binding.editTextText.text.toString().isNotEmpty()){
-                val data = PostModel(binding.editTextText.text.toString(),0,0,getCurrentDateTime(),UUID.randomUUID().toString(),number)
+        binding.postBtn.setOnClickListener {
+            if (binding.postEt.text.toString().isNotEmpty()){
+                val data = PostModel(binding.postEt.text.toString(),0,0,getCurrentDateTime(),UUID.randomUUID().toString(),number)
                 firebaseDataManager.uploadPostToDatabase(number,data,requireContext())
             }else{
-                SweetAlertDialog(context, SweetAlertDialog.ERROR_TYPE).setTitleText("empty fields")
-                    .setContentText(it.toString()).show()
+                SweetAlertDialog(context, SweetAlertDialog.ERROR_TYPE).setTitleText("empty fields").setContentText("Please fill").show()
             }
         }
 

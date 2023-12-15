@@ -13,6 +13,7 @@ import com.bhaskardamayanthi.gossy.R
 import com.bhaskardamayanthi.gossy.adapter.AnonymousPostAdapter
 import com.bhaskardamayanthi.gossy.databinding.FragmentAnonymousPostBinding
 import com.bhaskardamayanthi.gossy.viewModel.AnonymousPostViewModel
+import com.bhaskardamayanthi.gossy.viewModel.ShareDataInFragmentViewModel
 
 class AnonymousPostFragment : Fragment() {
 private lateinit var binding:FragmentAnonymousPostBinding
@@ -22,8 +23,9 @@ private lateinit var anonymousPostViewModel: AnonymousPostViewModel
         savedInstanceState: Bundle?
     ): View {
         anonymousPostViewModel = ViewModelProvider(requireActivity())[AnonymousPostViewModel::class.java]
+        val shareDataInFragmentViewModel = ViewModelProvider(requireActivity())[ShareDataInFragmentViewModel::class.java]
         binding = FragmentAnonymousPostBinding.inflate(layoutInflater,container,false)
-        val adapter = AnonymousPostAdapter(requireContext())
+        val adapter = AnonymousPostAdapter(requireContext(),shareDataInFragmentViewModel)
         binding.recyclerView.addItemDecoration(DividerItemDecoration(binding.recyclerView.context, DividerItemDecoration.VERTICAL))
         binding.recyclerView.layoutManager= LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = adapter

@@ -25,14 +25,19 @@ class GETfromFirebaseManager {
 
         })
     }
-    fun getLikeCount(id: String, callback: (Long) -> Unit) {
+    fun getLikeCount(number:String,id: String, callback: (Long,Boolean) -> Unit) {
         val DATABASE = Firebase.database("https://gossy-fbbcf-default-rtdb.asia-southeast1.firebasedatabase.app/").reference
         val likesRef = DATABASE.child("likes").child(id)
 
         likesRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val count = snapshot.childrenCount
-                callback(count) // Pass the count to the callback function
+                // Pass the count to the callback function
+                if (snapshot.hasChild(number)){
+                    callback(count,true)
+                }else{
+                    callback(count,false)
+                }
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -40,6 +45,19 @@ class GETfromFirebaseManager {
             }
         })
     }
+fun getCommentsCount(postId:String,callback: (Long) -> Unit){
+    val DATABASE = Firebase.database("https://gossy-fbbcf-default-rtdb.asia-southeast1.firebasedatabase.app/").reference
+    val usersRef = DATABASE.child("comments").child(postId)
+    usersRef.addValueEventListener(object :ValueEventListener{
+        override fun onDataChange(snapshot: DataSnapshot) {
+            callback(snapshot.childrenCount)
+        }
+
+        override fun onCancelled(error: DatabaseError) {
+        }
+
+    })
+}
 
 
 }

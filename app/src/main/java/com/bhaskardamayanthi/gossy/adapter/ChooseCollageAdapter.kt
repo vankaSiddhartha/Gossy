@@ -31,7 +31,7 @@ class ChooseCollageAdapter(val context: Context, private val list:ArrayList<Coll
         val storeManager = StoreManager(context)
         holder.binding.collegeView.setOnClickListener {
             storeManager.saveString("college",list[position].college.toString())
-            intentFragment(R.id.fragment_container,AIFaceFragment(),context)
+            intentFragment(R.id.fragment_container,AIFaceFragment(),context,"AiFaceFrag")
 
 
         }

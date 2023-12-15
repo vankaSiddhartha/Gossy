@@ -42,6 +42,6 @@ private lateinit var binding: ActivityGenderChooseFragmentBinding
     private fun storeGender(str:String){
         val storeManager = StoreManager(requireContext())
         storeManager.saveString("sex",str)
-        intentFragment(R.id.fragment_container,SelectCollegeFragment(),requireContext())
+        intentFragment(R.id.fragment_container,SelectCollegeFragment(),requireContext(),"selectCollege")
     }
 }

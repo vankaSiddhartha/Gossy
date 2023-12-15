@@ -17,19 +17,19 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         supportActionBar?.hide()
         val storeManager = StoreManager(this)
-        intentFragment(R.id.fragment_container,AnonymousPostFragment(),this)
+        intentFragment(R.id.frag,AnonymousPostFragment(),this,"AnonymousPostFrag")
         binding.titleText.text = "Gossips"
         val fakeImg = storeManager.getString("fakeImg","")
         Glide.with(this).load(fakeImg).into(binding.profile)
         binding.bottomNavigationView.setOnItemSelectedListener{menuItem->
             when (menuItem.itemId) {
                R.id.home->{
-                   intentFragment(R.id.fragment_container,AnonymousPostFragment(),this)
+                   intentFragment(R.id.frag,AnonymousPostFragment(),this,"AnonymousPostFrag")
                    binding.titleText.text = "Gossips"
                    true
                }
                 R.id.uploadPost->{
-                    intentFragment(R.id.fragment_container,UploadPostFragment(),this)
+                    intentFragment(R.id.frag,UploadPostFragment(),this,"UploadPostFrag")
                     binding.titleText.text = "Upload post"
                     true
                 }
