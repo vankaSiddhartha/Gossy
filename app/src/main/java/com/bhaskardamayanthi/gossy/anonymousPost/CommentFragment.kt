@@ -14,6 +14,7 @@ import cn.pedant.SweetAlert.SweetAlertDialog
 import com.bhaskardamayanthi.gossy.databinding.FragmentCommentBinding
 import com.bhaskardamayanthi.gossy.localStore.StoreManager
 import com.bhaskardamayanthi.gossy.managers.FirebaseDataManager
+import com.bhaskardamayanthi.gossy.managers.TokenManager
 import com.bhaskardamayanthi.gossy.model.PostModel
 import com.bhaskardamayanthi.gossy.viewModel.ShareDataInFragmentViewModel
 import com.bumptech.glide.Glide
@@ -25,7 +26,8 @@ import java.util.UUID
 class CommentFragment : Fragment() {
     private lateinit var binding:FragmentCommentBinding
     private lateinit var parentId:String
-   private lateinit var userFakeName:String
+   private lateinit var parentFakeName:String
+   private lateinit var parentToken:String
 
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -34,24 +36,31 @@ class CommentFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
-        userFakeName =""
+        parentFakeName =""
+        parentToken =""
+        parentId =""
         val shareDataInFragmentViewModel = ViewModelProvider(requireActivity())[ShareDataInFragmentViewModel::class.java]
         binding = FragmentCommentBinding.inflate(layoutInflater,container,false)
         val storeManager = StoreManager(requireContext())
+        val userToken = TokenManager(requireContext()).getSavedToken()
         val userFakeProfile = storeManager.getString("fakeImg","")
         val number = storeManager.getString("number","0")
+        val userName = storeManager.getString("fakeName","")
         val firebaseDataManager = FirebaseDataManager()
         Glide.with(requireContext()).load(userFakeProfile).into(binding.commentProfile)
         shareDataInFragmentViewModel.sharedData.observe(viewLifecycleOwner){fakeName->
             binding.replyTextView.setText( "Replying to @"+fakeName)
-            userFakeName = fakeName
+            parentFakeName = fakeName
 
 
         }
-        shareDataInFragmentViewModel.getParentPostId.observe(viewLifecycleOwner){parentPostId->
-            parentId = parentPostId
+        shareDataInFragmentViewModel.getParentPostId.observe(viewLifecycleOwner){getParentPostId->
+            parentId = getParentPostId
         }
+       shareDataInFragmentViewModel.getParentTokenId.observe(viewLifecycleOwner){getParentToken->
+           parentToken = getParentToken
 
+       }
         binding.cancelBtn.setOnClickListener {
 
             val fm: FragmentManager = requireActivity().supportFragmentManager
@@ -60,8 +69,8 @@ class CommentFragment : Fragment() {
         }
         binding.replyBtn.setOnClickListener {
         if (binding.commentEt.text.toString().isNotEmpty()) {
-            val comment = PostModel("@"+userFakeName+" "+binding.commentEt.text.toString(),0,0,getCurrentDateTime(),UUID.randomUUID().toString(),number)
-            firebaseDataManager.postComment(parentId,comment,requireContext())
+            val comment = PostModel("@"+parentFakeName+" "+binding.commentEt.text.toString(),0,0,getCurrentDateTime(),UUID.randomUUID().toString(),number,userToken)
+            firebaseDataManager.postComment(parentId,comment,requireContext(),userName+" is commented on your post",binding.commentEt.text.toString(),parentToken)
         }else{
             SweetAlertDialog(context, SweetAlertDialog.ERROR_TYPE).setTitleText("empty fields").setContentText("Please fill").show()
         }

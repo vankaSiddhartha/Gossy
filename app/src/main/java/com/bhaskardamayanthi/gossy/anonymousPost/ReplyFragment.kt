@@ -55,11 +55,14 @@ private lateinit var binding:FragmentReplyBinding
         val firebaseDataManager = FirebaseDataManager()
         val storeManager = StoreManager(requireContext())
         val  number = storeManager.getString("number", "")
+        val userName = storeManager.getString("fakeName","")
         // Inflate the layout for this fragment
             // Toast.makeText(requireContext(), arguments?.getString("name"), Toast.LENGTH_SHORT).show()
         Glide.with(requireActivity()).load(arguments?.getString("fakeImg")).into(binding.postProfile)
+        val postText =  arguments?.getString("postText")
+        val token = arguments?.getString("token")
         binding.userName.text = arguments?.getString("name")
-        binding.postText.text = arguments?.getString("postText")
+        binding.postText.text = postText
         binding.likeText.text = arguments?.getString("likes")
         binding.commentsNumber.text = arguments?.getString("comments")
         binding.time.text = arguments?.getString("time")
@@ -77,11 +80,19 @@ private lateinit var binding:FragmentReplyBinding
             adapter.setData(data)
             //Toast.makeText(requireContext(), data.toString(), Toast.LENGTH_SHORT).show()
         }
-        binding.likeBtn.setOnCheckedChangeListener { buttonView, isChecked ->
-            if (isChecked) {
-                firebaseDataManager.likePost(postId?:"",number)
-            } else {
-                // Handle unchecked state if needed
+//        binding.likeBtn.setOnCheckedChangeListener { buttonView, isChecked ->
+//            if (isChecked) {
+//                firebaseDataManager.likePost(postId?:"",number,userName+" is liked your post",postText.toString(),token.toString())
+//            } else {
+//                // Handle unchecked state if needed
+//                firebaseDataManager.disLike(postId?:"",number)
+//            }
+//        }
+        binding.likeBtn.setOnClickListener {
+            if (binding.likeBtn.isChecked){
+
+                firebaseDataManager.likePost(postId?:"",number,userName+" is liked your post",postText.toString(),token.toString())
+            }else{
                 firebaseDataManager.disLike(postId?:"",number)
             }
         }

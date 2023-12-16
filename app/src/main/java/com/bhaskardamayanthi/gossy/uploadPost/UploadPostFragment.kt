@@ -13,6 +13,7 @@ import com.bhaskardamayanthi.gossy.R
 import com.bhaskardamayanthi.gossy.databinding.FragmentUploadPostBinding
 import com.bhaskardamayanthi.gossy.localStore.StoreManager
 import com.bhaskardamayanthi.gossy.managers.FirebaseDataManager
+import com.bhaskardamayanthi.gossy.managers.TokenManager
 import com.bhaskardamayanthi.gossy.model.PostModel
 import com.bumptech.glide.Glide
 import java.time.LocalDateTime
@@ -45,11 +46,12 @@ private lateinit var binding:FragmentUploadPostBinding
 
         val fakeImg = storeManager.getString("fakeImg","")
         val number = storeManager.getString("number","0")
+        val token = TokenManager(requireContext()).getSavedToken()
 
 
         binding.postBtn.setOnClickListener {
             if (binding.postEt.text.toString().isNotEmpty()){
-                val data = PostModel(binding.postEt.text.toString(),0,0,getCurrentDateTime(),UUID.randomUUID().toString(),number)
+                val data = PostModel(binding.postEt.text.toString(),0,0,getCurrentDateTime(),UUID.randomUUID().toString(),number,token)
                 firebaseDataManager.uploadPostToDatabase(number,data,requireContext())
             }else{
                 SweetAlertDialog(context, SweetAlertDialog.ERROR_TYPE).setTitleText("empty fields").setContentText("Please fill").show()

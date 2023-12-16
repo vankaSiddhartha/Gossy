@@ -20,6 +20,7 @@ import com.bhaskardamayanthi.gossy.localStore.StoreManager
 import com.bhaskardamayanthi.gossy.managers.FirebaseDataManager
 import com.bhaskardamayanthi.gossy.managers.FragmentIntentManager.intentFragment
 import com.bhaskardamayanthi.gossy.managers.GETfromFirebaseManager
+import com.bhaskardamayanthi.gossy.managers.TokenManager
 import com.bhaskardamayanthi.gossy.model.PostModel
 import com.bhaskardamayanthi.gossy.viewModel.ShareDataInFragmentViewModel
 import com.bumptech.glide.Glide
@@ -55,8 +56,11 @@ class AnonymousPostAdapter(val context:Context,val shareDataInFragmentViewModel:
         imgList.clear()
 
         val storeManager = StoreManager(context)
+       // val token = TokenManager(context)
          name = ""
         val  number = storeManager.getString("number", "")
+        val userName = storeManager.getString("fakeName","")
+
         val geTfromFirebaseManager = GETfromFirebaseManager()
         val firebaseDataManager = FirebaseDataManager()
         getUserName(list[position].authId.toString()) { fake_name, fake_img ->
@@ -98,28 +102,37 @@ class AnonymousPostAdapter(val context:Context,val shareDataInFragmentViewModel:
 
             holder.binding.commentsNumber.text = commentsCounts.toString()
         }
-        holder.binding.likeBtn.setOnCheckedChangeListener { buttonView, isChecked ->
-            if (isChecked) {
-                try {
-                    firebaseDataManager.likePost(list[position].id.toString(),number)
+//        holder.binding.likeBtn.setOnCheckedChangeListener { buttonView, isChecked ->
+//            if (isChecked) {
+//                try {
+//                    firebaseDataManager.likePost(list[position].id.toString(),number,userName+" liked your post",list[position].postText.toString(),list[position].token.toString())
+//
+//                }catch (e:Exception){
+//
+//                }
+//            } else {
+//                // Handle unchecked state if needed
+//                try {
+//                    firebaseDataManager.disLike((list[position].id.toString()),number)
+//                }catch (e:Exception){
+//
+//                }
+//
+//            }
+//        }
+        holder.binding.likeBtn.setOnClickListener {
+            if (holder.binding.likeBtn.isChecked){
 
-                }catch (e:Exception){
-
-                }
-            } else {
-                // Handle unchecked state if needed
-                try {
-                    firebaseDataManager.disLike((list[position].id.toString()),number)
-                }catch (e:Exception){
-
-                }
-
+                firebaseDataManager.likePost(list[position].id.toString(),number,userName+" liked your post",list[position].postText.toString(),list[position].token.toString())
+            }else{
+                firebaseDataManager.disLike((list[position].id.toString()),number)
             }
         }
         holder.binding.commentBtn.setOnClickListener {
             val commentFragment = CommentFragment()
             shareDataInFragmentViewModel.sharedData.value = holder.binding.userName.text.toString()
             shareDataInFragmentViewModel.getParentPostId.value = list[position].id
+            shareDataInFragmentViewModel.getParentTokenId.value =list[position].token
        //     commentFragment.show((context as AppCompatActivity).supportFragmentManager,"Comments")
 
           //  val bundle = Bundle()
@@ -140,6 +153,7 @@ class AnonymousPostAdapter(val context:Context,val shareDataInFragmentViewModel:
                 putString("comments",holder.binding.commentsNumber.text.toString())
                 putString("fakeImg", imgList[position])
                 putBoolean("isLike",holder.binding.likeBtn.isChecked)
+                putString("token",list[position].token.toString())
                // Toast.makeText(context, holder.binding.likeBtn.isChecked.toString(), Toast.LENGTH_SHORT).show()
 
                 // Add more data as needed
