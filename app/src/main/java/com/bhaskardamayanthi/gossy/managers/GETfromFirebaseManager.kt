@@ -25,7 +25,7 @@ class GETfromFirebaseManager {
 
         })
     }
-    fun getLikeCount(number:String,id: String, callback: (Long,Boolean) -> Unit) {
+    fun getLikeCount(number:String,id: String, type:String,callback: (Long,Boolean) -> Unit) {
         val DATABASE = Firebase.database("https://gossy-fbbcf-default-rtdb.asia-southeast1.firebasedatabase.app/").reference
         val likesRef = DATABASE.child("likes").child(id)
 
@@ -37,6 +37,9 @@ class GETfromFirebaseManager {
                     callback(count,true)
                 }else{
                     callback(count,false)
+                }
+                if (type.equals("post")) {
+                    DATABASE.child("post").child(id).child("likes").setValue(count)
                 }
             }
 
@@ -51,6 +54,7 @@ fun getCommentsCount(postId:String,callback: (Long) -> Unit){
     usersRef.addValueEventListener(object :ValueEventListener{
         override fun onDataChange(snapshot: DataSnapshot) {
             callback(snapshot.childrenCount)
+
         }
 
         override fun onCancelled(error: DatabaseError) {
@@ -58,6 +62,26 @@ fun getCommentsCount(postId:String,callback: (Long) -> Unit){
 
     })
 }
+    fun checkIfFriend(userId:String,friendId:String,callback: (Boolean) -> Unit){
+        val DATABASE = Firebase.database("https://gossy-fbbcf-default-rtdb.asia-southeast1.firebasedatabase.app/").reference.child("friends").child(userId)
+        DATABASE.addValueEventListener(object :ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.hasChild(friendId)){
+                    callback(true)
+                }else{
+                    callback(false)
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+
+        })
+    }
+    fun seen(userId: String,notificationId:String){
+        val DATABASE = Firebase.database("https://gossy-fbbcf-default-rtdb.asia-southeast1.firebasedatabase.app/").reference.child("notifications").child(userId).child(notificationId).child("seen").setValue(true)
+    }
 
 
 }

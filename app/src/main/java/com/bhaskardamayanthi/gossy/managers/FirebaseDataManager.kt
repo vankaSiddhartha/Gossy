@@ -2,12 +2,16 @@ package com.bhaskardamayanthi.gossy.managers
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import cn.pedant.SweetAlert.SweetAlertDialog
 import com.bhaskardamayanthi.gossy.MainActivity
 import com.bhaskardamayanthi.gossy.auth.PermissionActivity
 import com.bhaskardamayanthi.gossy.loading.Loading.dismissDialogForLoading
 import com.bhaskardamayanthi.gossy.loading.Loading.showAlertDialogForLoading
+import com.bhaskardamayanthi.gossy.model.FriendsModel
+import com.bhaskardamayanthi.gossy.model.NotificationModel
 import com.bhaskardamayanthi.gossy.model.PostModel
 import com.bhaskardamayanthi.gossy.model.UserModel
 import com.bhaskardamayanthi.gossy.notifications.NotificationData
@@ -19,8 +23,11 @@ import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.UUID
 
-
+@RequiresApi(Build.VERSION_CODES.O)
 class FirebaseDataManager {
 
     val DATABASE = Firebase.database("https://gossy-fbbcf-default-rtdb.asia-southeast1.firebasedatabase.app/").reference
@@ -85,14 +92,15 @@ class FirebaseDataManager {
                     .setContentText(it.toString()).show()
             }
     }
-    fun likePost(id:String,userId: String,title:String,message:String,token:String){
+    fun likePost(id:String,userId: String,title:String,message:String,token:String,toNumber:String){
         DATABASE.child("likes").child(id).child(userId).setValue(userId).addOnSuccessListener {
-            PushNotifications(
-                NotificationData(title, message),
-                token
-            ).also {
-                sendNotification(it)
-            }
+//            PushNotifications(
+//                NotificationData(title, message),
+//                token
+//            ).also {
+//                sendNotification(it)
+//            }
+            sendPollAndLikeAndPostNotifications(id,toNumber,"like",title,message,token)
         }
     }
     fun disLike(id:String,userId: String){
@@ -107,12 +115,13 @@ class FirebaseDataManager {
         usersRef.child(postId).child(post.id.toString()).setValue(post)
             .addOnSuccessListener {
                 dismissDialogForLoading()
-                PushNotifications(
-                    NotificationData(title, message),
-                    token
-                ).also {
-                    sendNotification(it)
-                }
+//                PushNotifications(
+//                    NotificationData(title, message),
+//                    token
+//                ).also {
+//                    sendNotification(it)
+//                }
+                sendPollAndLikeAndPostNotifications(postId,post.authId.toString(),"comment",title,message,token)
                 SweetAlertDialog(
                     context,
                     SweetAlertDialog.SUCCESS_TYPE
@@ -146,5 +155,33 @@ class FirebaseDataManager {
             Log.e("aaaaaa", e.toString())
         }
     }
+     fun addFriends(userId: String,friendsId:String,context: Context){
+        val data = FriendsModel(friendsId)
+        val DATABASE = Firebase.database("https://gossy-fbbcf-default-rtdb.asia-southeast1.firebasedatabase.app/").reference
+        DATABASE.child("friends").child(userId).child(friendsId).setValue(data).addOnSuccessListener {
+            SweetAlertDialog(context, SweetAlertDialog.SUCCESS_TYPE).setTitleText("Good job")
+                .setContentText("Nice you have new friend").show()
+        }
+    }
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun sendPollAndLikeAndPostNotifications(userId: String, friendsId: String, type:String, title: String, message: String, token: String){
+        val currentDateTime = LocalDateTime.now()
+        val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")
+
+        val formattedDateTime = currentDateTime.format(formatter)
+        val notificationId =UUID.randomUUID().toString()
+        val data = NotificationModel(notificationId,type,title,message,friendsId,userId,formattedDateTime)
+        val DATABASE = Firebase.database("https://gossy-fbbcf-default-rtdb.asia-southeast1.firebasedatabase.app/").reference.child("notifications")
+        DATABASE.child(friendsId).child(notificationId).setValue(data).addOnSuccessListener {
+            PushNotifications(
+                NotificationData(title, message),
+                token
+            ).also {
+                sendNotification(it)
+            }
+        }
+
+    }
+
 
 }

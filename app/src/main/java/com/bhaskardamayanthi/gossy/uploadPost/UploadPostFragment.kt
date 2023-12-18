@@ -11,11 +11,13 @@ import androidx.annotation.RequiresApi
 import cn.pedant.SweetAlert.SweetAlertDialog
 import com.bhaskardamayanthi.gossy.R
 import com.bhaskardamayanthi.gossy.databinding.FragmentUploadPostBinding
+import com.bhaskardamayanthi.gossy.globalNotification.NotificationToAll
 import com.bhaskardamayanthi.gossy.localStore.StoreManager
 import com.bhaskardamayanthi.gossy.managers.FirebaseDataManager
 import com.bhaskardamayanthi.gossy.managers.TokenManager
 import com.bhaskardamayanthi.gossy.model.PostModel
 import com.bumptech.glide.Glide
+import com.google.firebase.messaging.FirebaseMessaging
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
@@ -43,15 +45,18 @@ private lateinit var binding:FragmentUploadPostBinding
         binding = FragmentUploadPostBinding.inflate(layoutInflater,container,false)
         val storeManager = StoreManager(requireContext())
         val firebaseDataManager = FirebaseDataManager()
-
+        val notificationToAll = NotificationToAll()
         val fakeImg = storeManager.getString("fakeImg","")
         val number = storeManager.getString("number","0")
         val token = TokenManager(requireContext()).getSavedToken()
 
 
         binding.postBtn.setOnClickListener {
+
+            notificationToAll.sendNotificationToAll("test","test","/topics/myTopic2")
             if (binding.postEt.text.toString().isNotEmpty()){
-                val data = PostModel(binding.postEt.text.toString(),0,0,getCurrentDateTime(),UUID.randomUUID().toString(),number,token)
+                val postId = UUID.randomUUID().toString()
+                val data = PostModel(binding.postEt.text.toString(),0,0,getCurrentDateTime(),postId,number,token,postId)
                 firebaseDataManager.uploadPostToDatabase(number,data,requireContext())
             }else{
                 SweetAlertDialog(context, SweetAlertDialog.ERROR_TYPE).setTitleText("empty fields").setContentText("Please fill").show()

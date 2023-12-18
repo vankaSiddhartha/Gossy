@@ -69,7 +69,10 @@ class CommentFragment : Fragment() {
         }
         binding.replyBtn.setOnClickListener {
         if (binding.commentEt.text.toString().isNotEmpty()) {
-            val comment = PostModel("@"+parentFakeName+" "+binding.commentEt.text.toString(),0,0,getCurrentDateTime(),UUID.randomUUID().toString(),number,userToken)
+
+            val commentId = UUID.randomUUID().toString()
+            val path = parentId+"/"+commentId
+            val comment = PostModel("@"+parentFakeName+" "+binding.commentEt.text.toString(),0,0,getCurrentDateTime(),commentId,number,userToken,path)
             firebaseDataManager.postComment(parentId,comment,requireContext(),userName+" is commented on your post",binding.commentEt.text.toString(),parentToken)
         }else{
             SweetAlertDialog(context, SweetAlertDialog.ERROR_TYPE).setTitleText("empty fields").setContentText("Please fill").show()

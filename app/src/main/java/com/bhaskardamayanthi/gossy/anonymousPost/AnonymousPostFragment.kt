@@ -17,12 +17,12 @@ import com.bhaskardamayanthi.gossy.viewModel.ShareDataInFragmentViewModel
 
 class AnonymousPostFragment : Fragment() {
 private lateinit var binding:FragmentAnonymousPostBinding
-private lateinit var anonymousPostViewModel: AnonymousPostViewModel
+private lateinit var viewModel: AnonymousPostViewModel
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        anonymousPostViewModel = ViewModelProvider(requireActivity())[AnonymousPostViewModel::class.java]
+        viewModel = ViewModelProvider(requireActivity())[AnonymousPostViewModel::class.java]
         val shareDataInFragmentViewModel = ViewModelProvider(requireActivity())[ShareDataInFragmentViewModel::class.java]
         binding = FragmentAnonymousPostBinding.inflate(layoutInflater,container,false)
         val adapter = AnonymousPostAdapter(requireContext(),shareDataInFragmentViewModel)
@@ -30,9 +30,10 @@ private lateinit var anonymousPostViewModel: AnonymousPostViewModel
         binding.recyclerView.layoutManager= LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = adapter
 
-        anonymousPostViewModel.dataList.observe(requireActivity()) { data ->
+        viewModel.dataList.observe(requireActivity()) { data ->
 
             adapter.setData(data.reversed())
+            adapter.type("post")
 
 
 

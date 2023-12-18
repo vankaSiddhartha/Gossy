@@ -3,6 +3,7 @@ package com.bhaskardamayanthi.gossy.adapter
 import android.content.Context
 import android.graphics.Color
 import android.icu.text.SimpleDateFormat
+import android.os.Build
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
@@ -10,6 +11,7 @@ import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bhaskardamayanthi.gossy.R
@@ -35,11 +37,15 @@ import java.util.Locale
 class AnonymousPostAdapter(val context:Context,val shareDataInFragmentViewModel: ShareDataInFragmentViewModel):RecyclerView.Adapter<AnonymousPostAdapter.ViewHolder>() {
     private var list: List<PostModel> = emptyList()
     private var imgList = HashMap<Int,String>()
+    private var type: String = ""
 
     private lateinit var name: String
     fun setData(newList: List<PostModel>) {
         list = newList
         notifyDataSetChanged()
+    }
+    fun type(pType:String){
+        type = pType
     }
 
     inner class ViewHolder(val binding: PostBinding) : RecyclerView.ViewHolder(binding.root)
@@ -52,6 +58,7 @@ class AnonymousPostAdapter(val context:Context,val shareDataInFragmentViewModel:
         return list.size
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         imgList.clear()
 
@@ -92,7 +99,7 @@ class AnonymousPostAdapter(val context:Context,val shareDataInFragmentViewModel:
 // Set the text with color-tagged spannable string to the TextView
         holder.binding.postText.text = spannableString
         holder.binding.time.text = getRemainingTime(list[position].time.toString())
-        geTfromFirebaseManager.getLikeCount(number,list[position].id.toString()) { count,isLiked ->
+        geTfromFirebaseManager.getLikeCount(number,list[position].id.toString(),type) { count,isLiked ->
             // Do something with the count, for example, print it
             holder.binding.likeText.text =count.toString()
             holder.binding.likeBtn.isChecked = isLiked
@@ -121,9 +128,13 @@ class AnonymousPostAdapter(val context:Context,val shareDataInFragmentViewModel:
 //            }
 //        }
         holder.binding.likeBtn.setOnClickListener {
+            val likebtn = holder.binding.likeBtn
+            var likeBtnText = likebtn.text.toString()
+            likeBtnText += 1
+            holder.binding.likeText.setText(likeBtnText.toString())
             if (holder.binding.likeBtn.isChecked){
 
-                firebaseDataManager.likePost(list[position].id.toString(),number,userName+" liked your post",list[position].postText.toString(),list[position].token.toString())
+                firebaseDataManager.likePost(list[position].id.toString(),number,userName+" liked your post",list[position].postText.toString(),list[position].token.toString(),list[position].authId.toString())
             }else{
                 firebaseDataManager.disLike((list[position].id.toString()),number)
             }
@@ -154,6 +165,7 @@ class AnonymousPostAdapter(val context:Context,val shareDataInFragmentViewModel:
                 putString("fakeImg", imgList[position])
                 putBoolean("isLike",holder.binding.likeBtn.isChecked)
                 putString("token",list[position].token.toString())
+
                // Toast.makeText(context, holder.binding.likeBtn.isChecked.toString(), Toast.LENGTH_SHORT).show()
 
                 // Add more data as needed
@@ -214,7 +226,7 @@ class AnonymousPostAdapter(val context:Context,val shareDataInFragmentViewModel:
         var remainingTimeInMillis =  currentTimeInMillis- givenTimeInMillis
 
         if (remainingTimeInMillis <= 0) {
-            return "Time's up!"
+            return "0 seconds"
         }
 
         val secondsInMilli: Long = 1000

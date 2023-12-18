@@ -24,9 +24,7 @@
         app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardView2">
-
-    </FrameLayout>
+        app:layout_constraintTop_toBottomOf="@+id/cardView2"/>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView2"
@@ -59,35 +57,64 @@
                 android:textSize="20sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@+id/profile"
-                app:layout_constraintEnd_toStartOf="@+id/imageButton3"
+                app:layout_constraintEnd_toStartOf="@+id/search_btn"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/profile"
                 app:layout_constraintTop_toTopOf="@+id/profile" />
 
             <ImageButton
-                android:id="@+id/imageButton3"
+                android:id="@+id/search_btn"
                 android:layout_width="wrap_content"
-                android:contentDescription="@string/search"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="20dp"
                 android:background="@color/white"
+                android:contentDescription="@string/search"
                 app:layout_constraintBottom_toBottomOf="@+id/title_text"
-                app:layout_constraintEnd_toStartOf="@+id/imageButton4"
+                app:layout_constraintEnd_toStartOf="@+id/cardView5"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toEndOf="@+id/profile"
                 app:layout_constraintTop_toTopOf="@+id/title_text"
                 app:srcCompat="@drawable/baseline_search_24" />
 
-            <ImageButton
-                android:id="@+id/imageButton4"
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardView5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:contentDescription="@string/notifications"
-                app:layout_constraintBottom_toBottomOf="@+id/imageButton3"
+                app:cardElevation="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/imageButton3"
-                app:srcCompat="@drawable/baseline_notifications_none_24" />
+                app:layout_constraintTop_toTopOf="parent">
+
+                <FrameLayout
+                    style="?attr/actionButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clipToPadding="false"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:id="@+id/notification_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:src="@drawable/notification_with_counter" />
+
+                    <TextView
+                        android:id="@+id/notification_badge"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="right|end|top"
+                        android:layout_marginTop="3dp"
+                        android:layout_marginEnd="-5dp"
+                        android:layout_marginRight="-5dp"
+                        android:background="@drawable/badge_background"
+                        android:gravity="center"
+                        android:padding="3dp"
+                        android:text="0"
+                        android:textColor="@android:color/white"
+                        android:textSize="10sp" />
+
+                </FrameLayout>
+            </androidx.cardview.widget.CardView>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

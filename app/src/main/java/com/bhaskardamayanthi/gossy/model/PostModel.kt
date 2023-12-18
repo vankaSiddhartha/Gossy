@@ -8,6 +8,7 @@ data class PostModel(
     val time:String?=null,
     val id:String?=null,
     val authId:String?=null,
-    val token:String?=null
+    val token:String?=null,
+    val path:String?=null
 
 )

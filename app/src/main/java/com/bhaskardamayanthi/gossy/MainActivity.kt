@@ -6,6 +6,10 @@ import com.bhaskardamayanthi.gossy.anonymousPost.AnonymousPostFragment
 import com.bhaskardamayanthi.gossy.databinding.ActivityMainBinding
 import com.bhaskardamayanthi.gossy.localStore.StoreManager
 import com.bhaskardamayanthi.gossy.managers.FragmentIntentManager.intentFragment
+import com.bhaskardamayanthi.gossy.notificationFragments.NotificationFragment
+import com.bhaskardamayanthi.gossy.polls.FindFriendFragment
+import com.bhaskardamayanthi.gossy.polls.PollFragment
+import com.bhaskardamayanthi.gossy.trending.TrendingFragment
 import com.bhaskardamayanthi.gossy.uploadPost.UploadPostFragment
 import com.bumptech.glide.Glide
 
@@ -19,6 +23,12 @@ class MainActivity : AppCompatActivity() {
         val storeManager = StoreManager(this)
         intentFragment(R.id.frag,AnonymousPostFragment(),this,"AnonymousPostFrag")
         binding.titleText.text = "Gossips"
+        binding.searchBtn.setOnClickListener {
+            intentFragment(R.id.frag,FindFriendFragment(),this@MainActivity,"SearchFragment")
+        }
+        binding.notificationBtn.setOnClickListener {
+            intentFragment(R.id.frag,NotificationFragment(),this,"NotificationFragment")
+        }
         val fakeImg = storeManager.getString("fakeImg","")
         Glide.with(this).load(fakeImg).into(binding.profile)
         binding.bottomNavigationView.setOnItemSelectedListener{menuItem->
@@ -33,6 +43,16 @@ class MainActivity : AppCompatActivity() {
                     binding.titleText.text = "Upload post"
                     true
                 }
+                R.id.polls->{
+                    binding.titleText.text = "Polls"
+                    intentFragment(R.id.frag,PollFragment(),this,"PollsFragment")
+                    true
+                }
+             R.id.trending->{
+                 binding.titleText.text= "Trending posts"
+                 intentFragment(R.id.frag,TrendingFragment(),this,"TrendingFragment")
+                 true
+             }
                 else->{
                     true
                 }

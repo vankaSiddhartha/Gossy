@@ -13,9 +13,9 @@
         android:title="@string/upload_post"
         android:icon="@drawable/baseline_add_circle_outline_24"/>
     <item
-        android:id="@+id/notifications"
-        android:title="@string/notifications"
-        android:icon="@drawable/baseline_notifications_24"/>
+        android:id="@+id/trending"
+        android:title="@string/trending"
+        android:icon="@drawable/baseline_trending_up_24"/>
     <item
         android:id="@+id/account"
         android:title="@string/account"
