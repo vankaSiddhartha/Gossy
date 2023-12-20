@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStore
@@ -40,18 +41,39 @@ private lateinit var binding:FragmentReplyBinding
         val shareDataInFragmentViewModel = ViewModelProvider(requireActivity())[ShareDataInFragmentViewModel::class.java]
         binding = FragmentReplyBinding.inflate(layoutInflater,container,false)
         val postId = arguments?.getString("id")
+        val path = arguments?.getString("path")
+        val token = arguments?.getString("token")
+        val toNumber =arguments?.getString("number")
         binding.commentBtn.setOnClickListener {
-            val commentFragment = CommentFragment()
-            shareDataInFragmentViewModel.sharedData.value = binding.userName.text.toString()
-            shareDataInFragmentViewModel.getParentPostId.value = postId
-            //     commentFragment.show((context as AppCompatActivity).supportFragmentManager,"Comments")
+//            val commentFragment = CommentFragment()
+//            shareDataInFragmentViewModel.sharedData.value = binding.userName.text.toString()
+//            shareDataInFragmentViewModel.getParentPostId.value = postId
+//            //     commentFragment.show((context as AppCompatActivity).supportFragmentManager,"Comments")
+//
+//            //  val bundle = Bundle()
+//            //    bundle.putString("userName", name) // Replace "YourDataHere" with the actual data
+//
+//            //  commentFragment.arguments = bundle
+//
+//            FragmentIntentManager.intentFragment(R.id.frag, commentFragment, requireContext(), "comment")
+            val bundle = Bundle()
+            bundle.putString("authId", toNumber)
+            bundle.putString("name", binding.userName.text.toString())
+            bundle.putString("id", postId)
+            bundle.putString("token", token)
 
-            //  val bundle = Bundle()
-            //    bundle.putString("userName", name) // Replace "YourDataHere" with the actual data
+            // Set the result for the parent fragment
+            (context as AppCompatActivity).supportFragmentManager.setFragmentResult("data", bundle)
 
-            //  commentFragment.arguments = bundle
+            // Transition to the CommentFragment
+            val fragment = CommentFragment()
+            fragment.arguments = bundle // Pass the same bundle to the new fragment if needed
 
-            FragmentIntentManager.intentFragment(R.id.frag, commentFragment, requireContext(), "comment")
+            // Begin a fragment transaction to replace the current fragment with CommentFragment
+            (context as AppCompatActivity).supportFragmentManager.beginTransaction()
+                .replace(R.id.frag, fragment, "comment")
+                .addToBackStack(null) // Optional: Add to back stack if you want fragment navigation
+                .commit()
         }
 
 
@@ -63,10 +85,10 @@ private lateinit var binding:FragmentReplyBinding
             // Toast.makeText(requireContext(), arguments?.getString("name"), Toast.LENGTH_SHORT).show()
         Glide.with(requireActivity()).load(arguments?.getString("fakeImg")).into(binding.postProfile)
         val postText =  arguments?.getString("postText")
-        val token = arguments?.getString("token")
+
         binding.userName.text = arguments?.getString("name")
         binding.postText.text = postText
-        val toNumber =arguments?.getString("number")
+
         binding.likeText.text = arguments?.getString("likes")
         binding.commentsNumber.text = arguments?.getString("comments")
         binding.time.text = arguments?.getString("time")
@@ -78,7 +100,7 @@ private lateinit var binding:FragmentReplyBinding
 
         binding.commentsRv.addItemDecoration(DividerItemDecoration(binding.commentsRv.context, DividerItemDecoration.VERTICAL))
         binding.commentsRv.layoutManager = LinearLayoutManager(requireContext())
-        val adapter = AnonymousPostAdapter(requireContext(),shareDataInFragmentViewModel)
+        val adapter = AnonymousPostAdapter(requireContext(),shareDataInFragmentViewModel,false,viewLifecycleOwner)
         binding.commentsRv.adapter = adapter
         viewModel.dataList.observe(viewLifecycleOwner){data->
             adapter.setData(data)
@@ -96,7 +118,7 @@ private lateinit var binding:FragmentReplyBinding
         binding.likeBtn.setOnClickListener {
             if (binding.likeBtn.isChecked){
 
-                firebaseDataManager.likePost(postId?:"",number,userName+" is liked your post",postText.toString(),token.toString(),toNumber.toString())
+                firebaseDataManager.likePost(postId?:"",number,userName+" is liked your post",postText.toString(),token.toString(),toNumber.toString(),path.toString())
             }else{
                 firebaseDataManager.disLike(postId?:"",number)
             }

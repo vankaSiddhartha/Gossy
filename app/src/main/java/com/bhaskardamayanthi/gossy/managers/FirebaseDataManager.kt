@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.util.Log
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import cn.pedant.SweetAlert.SweetAlertDialog
 import com.bhaskardamayanthi.gossy.MainActivity
@@ -92,7 +93,7 @@ class FirebaseDataManager {
                     .setContentText(it.toString()).show()
             }
     }
-    fun likePost(id:String,userId: String,title:String,message:String,token:String,toNumber:String){
+    fun likePost(id:String,userId: String,title:String,message:String,token:String,toNumber:String,path: String){
         DATABASE.child("likes").child(id).child(userId).setValue(userId).addOnSuccessListener {
 //            PushNotifications(
 //                NotificationData(title, message),
@@ -100,13 +101,13 @@ class FirebaseDataManager {
 //            ).also {
 //                sendNotification(it)
 //            }
-            sendPollAndLikeAndPostNotifications(id,toNumber,"like",title,message,token)
+            sendPollAndLikeAndPostNotifications(path,toNumber,"like",title,message,token)
         }
     }
     fun disLike(id:String,userId: String){
         DATABASE.child("likes").child(id).child(userId).removeValue()
     }
-    fun postComment( postId: String,post: PostModel, context: Context,title: String,message: String,token: String){
+    fun postComment( postId: String,post: PostModel, context: Context,title: String,message: String,token: String,path:String,parentNumber:String){
         showAlertDialogForLoading(context)
         // Assuming you have a "users" node in your database
         val usersRef = DATABASE.child("comments")
@@ -121,7 +122,7 @@ class FirebaseDataManager {
 //                ).also {
 //                    sendNotification(it)
 //                }
-                sendPollAndLikeAndPostNotifications(postId,post.authId.toString(),"comment",title,message,token)
+                sendPollAndLikeAndPostNotifications(path,parentNumber,"comment",title,message,token)
                 SweetAlertDialog(
                     context,
                     SweetAlertDialog.SUCCESS_TYPE
@@ -167,7 +168,7 @@ class FirebaseDataManager {
     fun sendPollAndLikeAndPostNotifications(userId: String, friendsId: String, type:String, title: String, message: String, token: String){
         val currentDateTime = LocalDateTime.now()
         val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")
-
+        Log.e("NumberBro",friendsId)
         val formattedDateTime = currentDateTime.format(formatter)
         val notificationId =UUID.randomUUID().toString()
         val data = NotificationModel(notificationId,type,title,message,friendsId,userId,formattedDateTime)

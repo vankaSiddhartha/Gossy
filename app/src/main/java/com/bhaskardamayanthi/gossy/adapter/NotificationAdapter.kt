@@ -1,6 +1,7 @@
 package com.bhaskardamayanthi.gossy.adapter
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.icu.text.SimpleDateFormat
 import android.view.LayoutInflater
@@ -12,6 +13,9 @@ import com.bhaskardamayanthi.gossy.databinding.NotificationItemBinding
 import com.bhaskardamayanthi.gossy.localStore.StoreManager
 import com.bhaskardamayanthi.gossy.managers.GETfromFirebaseManager
 import com.bhaskardamayanthi.gossy.model.NotificationModel
+import com.bhaskardamayanthi.gossy.notificationSee.SeeCommentActivity
+import com.bhaskardamayanthi.gossy.notificationSee.SeeLikePostActivity
+import com.bhaskardamayanthi.gossy.notificationSee.SeeThePollActivity
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
@@ -48,12 +52,29 @@ class NotificationAdapter(val context:Context):RecyclerView.Adapter<Notification
             }
 
         }
+
         val grey = Color.GRAY
 
         holder.binding.notificationText.text =list[position].title
         holder.binding.timeText.text = getRemainingTime(list[position].time.toString()).toString()
         if (   list[position].seen){
             holder.binding.notificationCard.setCardBackgroundColor(grey)
+        }
+        holder.binding.notificationCard.setOnClickListener {
+            if (list[position].type=="poll") {
+                val intent = Intent(context, SeeThePollActivity::class.java)
+                intent.putExtra("question", list[position].message)
+                intent.putExtra("sex", list[position].title)
+                context.startActivity(intent)
+            }else if (list[position].type =="like"){
+                val intent = Intent(context, SeeLikePostActivity::class.java)
+                intent.putExtra("path", list[position].from)
+                context.startActivity(intent)
+            }else{
+                val  intent = Intent(context,SeeLikePostActivity::class.java)
+                intent.putExtra("path",list[position].from)
+                context.startActivity(intent)
+            }
         }
 
 

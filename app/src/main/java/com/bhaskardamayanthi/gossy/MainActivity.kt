@@ -1,5 +1,6 @@
 package com.bhaskardamayanthi.gossy
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.bhaskardamayanthi.gossy.anonymousPost.AnonymousPostFragment
@@ -7,6 +8,7 @@ import com.bhaskardamayanthi.gossy.databinding.ActivityMainBinding
 import com.bhaskardamayanthi.gossy.localStore.StoreManager
 import com.bhaskardamayanthi.gossy.managers.FragmentIntentManager.intentFragment
 import com.bhaskardamayanthi.gossy.notificationFragments.NotificationFragment
+import com.bhaskardamayanthi.gossy.notificationSee.SeeThePollActivity
 import com.bhaskardamayanthi.gossy.polls.FindFriendFragment
 import com.bhaskardamayanthi.gossy.polls.PollFragment
 import com.bhaskardamayanthi.gossy.trending.TrendingFragment
@@ -20,6 +22,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         supportActionBar?.hide()
+      //  startActivity(Intent(this,SeeThePollActivity::class.java))
         val storeManager = StoreManager(this)
         intentFragment(R.id.frag,AnonymousPostFragment(),this,"AnonymousPostFrag")
         binding.titleText.text = "Gossips"

@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bhaskardamayanthi.gossy.databinding.PollItemBinding
+import com.bhaskardamayanthi.gossy.managers.EmojiManager.emojiList
 import com.bhaskardamayanthi.gossy.managers.EmojiManager.getEmoji
 import com.bhaskardamayanthi.gossy.managers.PollsFragColorsManager.backgroundColors
 import com.bhaskardamayanthi.gossy.managers.PollsFragColorsManager.textColors
@@ -40,7 +41,10 @@ class PollAdapter(val context: Context):RecyclerView.Adapter<PollAdapter.ViewHol
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val random = Random(System.currentTimeMillis())
-        val randomNumber = random.nextInt(0, 125)
+
+
+
+        val randomNumber = random.nextInt(0, emojiList.size)
         val emoji= getEmoji(randomNumber)
         val rondomColors = random.nextInt(0, backgroundColors.size)
        // Toast.makeText(context, backgroundColors.size.toString(), Toast.LENGTH_SHORT).show()

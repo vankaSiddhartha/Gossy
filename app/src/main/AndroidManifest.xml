@@ -3,13 +3,37 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 
+    <queries>
 
+        <!-- Queries for Instagram -->
+        <intent>
+            <action android:name="android.intent.action.SEND" />
 
+            <data android:mimeType="image/*" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.SEND" />
 
+            <data android:mimeType="text/plain" />
+        </intent>
+
+        <package android:name="com.instagram.android" />
+
+        <!-- Queries for Snapchat -->
+        <intent>
+            <action android:name="android.intent.action.SEND" />
+
+            <data android:mimeType="image/*" />
+        </intent>
+
+        <package android:name="com.snapchat.android" />
+
+        <!-- Add more queries for other apps or interactions as needed -->
+    </queries>
 
     <application
         android:name=".App"
@@ -22,15 +46,29 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Gossy"
         tools:targetApi="31">
-        <service android:name=".notifications.FirebaseService"
-            android:permission="com.google.android.c2dm.permission.SEND"
-            android:exported="true">
+        <activity
+            android:name=".notificationSee.SeeCommentActivity"
+            android:exported="false" />
+        <activity
+            android:name=".notificationSee.CommentActivity"
+            android:exported="false" />
+        <activity
+            android:name=".notificationSee.SeeLikePostActivity"
+            android:exported="false" />
+        <activity
+            android:name=".notificationSee.SeeThePollActivity"
+            android:exported="false" />
+
+        <service
+            android:name=".notifications.FirebaseService"
+            android:exported="true"
+            android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
             </intent-filter>
-
         </service>
+
         <activity
             android:name=".auth.FetchDataLoadingActivity"
             android:exported="false" />

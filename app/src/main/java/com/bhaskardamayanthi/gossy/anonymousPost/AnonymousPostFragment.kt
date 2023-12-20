@@ -25,7 +25,7 @@ private lateinit var viewModel: AnonymousPostViewModel
         viewModel = ViewModelProvider(requireActivity())[AnonymousPostViewModel::class.java]
         val shareDataInFragmentViewModel = ViewModelProvider(requireActivity())[ShareDataInFragmentViewModel::class.java]
         binding = FragmentAnonymousPostBinding.inflate(layoutInflater,container,false)
-        val adapter = AnonymousPostAdapter(requireContext(),shareDataInFragmentViewModel)
+        val adapter = AnonymousPostAdapter(requireContext(),shareDataInFragmentViewModel,false,viewLifecycleOwner)
         binding.recyclerView.addItemDecoration(DividerItemDecoration(binding.recyclerView.context, DividerItemDecoration.VERTICAL))
         binding.recyclerView.layoutManager= LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = adapter

@@ -29,7 +29,7 @@ private lateinit var viewModel:TrendingViewModel
         binding = FragmentTrendingBinding.inflate(layoutInflater,container,false)
         viewModel = ViewModelProvider(requireActivity())[TrendingViewModel::class.java]
         val shareDataInFragmentViewModel = ViewModelProvider(requireActivity())[ShareDataInFragmentViewModel::class.java]
-        val adapter = AnonymousPostAdapter(requireContext(),shareDataInFragmentViewModel)
+        val adapter = AnonymousPostAdapter(requireContext(),shareDataInFragmentViewModel,false,viewLifecycleOwner)
         binding.recyclerView.addItemDecoration(DividerItemDecoration(binding.recyclerView.context, DividerItemDecoration.VERTICAL))
         binding.recyclerView.layoutManager= LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = adapter

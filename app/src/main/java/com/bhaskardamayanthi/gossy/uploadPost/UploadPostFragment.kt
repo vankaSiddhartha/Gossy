@@ -56,7 +56,8 @@ private lateinit var binding:FragmentUploadPostBinding
             notificationToAll.sendNotificationToAll("test","test","/topics/myTopic2")
             if (binding.postEt.text.toString().isNotEmpty()){
                 val postId = UUID.randomUUID().toString()
-                val data = PostModel(binding.postEt.text.toString(),0,0,getCurrentDateTime(),postId,number,token,postId)
+                val path  = "post/$postId"
+                val data = PostModel(binding.postEt.text.toString(),0,0,getCurrentDateTime(),postId,number,token,path)
                 firebaseDataManager.uploadPostToDatabase(number,data,requireContext())
             }else{
                 SweetAlertDialog(context, SweetAlertDialog.ERROR_TYPE).setTitleText("empty fields").setContentText("Please fill").show()

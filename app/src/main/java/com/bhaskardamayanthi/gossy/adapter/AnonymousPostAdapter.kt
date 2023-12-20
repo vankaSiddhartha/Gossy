@@ -1,6 +1,7 @@
 package com.bhaskardamayanthi.gossy.adapter
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.icu.text.SimpleDateFormat
 import android.os.Build
@@ -13,6 +14,9 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
+import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import com.bhaskardamayanthi.gossy.R
 import com.bhaskardamayanthi.gossy.anonymousPost.CommentFragment
@@ -24,6 +28,8 @@ import com.bhaskardamayanthi.gossy.managers.FragmentIntentManager.intentFragment
 import com.bhaskardamayanthi.gossy.managers.GETfromFirebaseManager
 import com.bhaskardamayanthi.gossy.managers.TokenManager
 import com.bhaskardamayanthi.gossy.model.PostModel
+import com.bhaskardamayanthi.gossy.notificationSee.CommentActivity
+import com.bhaskardamayanthi.gossy.notificationSee.SeeLikePostActivity
 import com.bhaskardamayanthi.gossy.viewModel.ShareDataInFragmentViewModel
 import com.bumptech.glide.Glide
 import com.google.firebase.database.DataSnapshot
@@ -31,10 +37,15 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import java.lang.Exception
 import java.util.Calendar
 import java.util.Locale
 
-class AnonymousPostAdapter(val context:Context,val shareDataInFragmentViewModel: ShareDataInFragmentViewModel):RecyclerView.Adapter<AnonymousPostAdapter.ViewHolder>() {
+class AnonymousPostAdapter(val context:Context,val shareDataInFragmentViewModel: ShareDataInFragmentViewModel,val isNotification:Boolean,private val lifecycleOwner: LifecycleOwner):RecyclerView.Adapter<AnonymousPostAdapter.ViewHolder>() {
     private var list: List<PostModel> = emptyList()
     private var imgList = HashMap<Int,String>()
     private var type: String = ""
@@ -80,24 +91,10 @@ class AnonymousPostAdapter(val context:Context,val shareDataInFragmentViewModel:
         }
 
       //  holder.binding.postText.text = list[position].postText
-        val pattern = "@[a-zA-Z0-9_]+".toRegex() // Define the pattern to find usernames starting with @
 
-        val spannableString = SpannableString(list[position].postText)
-
-        pattern.findAll(list[position].postText.toString()).forEach { matchResult ->
-            val startIndex = matchResult.range.first
-            val endIndex = matchResult.range.last + 1 // Adding 1 to include '@' in the span
-
-            spannableString.setSpan(
-                ForegroundColorSpan(Color.BLUE), // Set the color
-                startIndex, // Start index of the @ tag
-                endIndex, // End index of the @ tag (inclusive)
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
-        }
 
 // Set the text with color-tagged spannable string to the TextView
-        holder.binding.postText.text = spannableString
+        holder.binding.postText.text = list[position].postText
         holder.binding.time.text = getRemainingTime(list[position].time.toString())
         geTfromFirebaseManager.getLikeCount(number,list[position].id.toString(),type) { count,isLiked ->
             // Do something with the count, for example, print it
@@ -128,51 +125,133 @@ class AnonymousPostAdapter(val context:Context,val shareDataInFragmentViewModel:
 //            }
 //        }
         holder.binding.likeBtn.setOnClickListener {
-            val likebtn = holder.binding.likeBtn
-            var likeBtnText = likebtn.text.toString()
-            likeBtnText += 1
-            holder.binding.likeText.setText(likeBtnText.toString())
-            if (holder.binding.likeBtn.isChecked){
 
-                firebaseDataManager.likePost(list[position].id.toString(),number,userName+" liked your post",list[position].postText.toString(),list[position].token.toString(),list[position].authId.toString())
+            if (holder.binding.likeBtn.isChecked){
+                val likebtn = holder.binding.likeBtn
+                var likeBtnText = likebtn.text.toString()
+                likeBtnText += 1
+                holder.binding.likeText.setText(likeBtnText.toString())
+                firebaseDataManager.likePost(list[position].id.toString(),number,
+                    "$userName liked your post",list[position].postText.toString(),list[position].token.toString(),list[position].authId.toString(),list[position].path.toString())
             }else{
                 firebaseDataManager.disLike((list[position].id.toString()),number)
             }
         }
+        shareDataInFragmentViewModel.dataUpdated.observe(lifecycleOwner) { isUpdated ->
+            if (isUpdated) {
+                // Launch the fragment when data is updated
+                val commentFragment = CommentFragment()
+                intentFragment(R.id.frag, commentFragment, context, "comment")
+            }
+        }
         holder.binding.commentBtn.setOnClickListener {
-            val commentFragment = CommentFragment()
-            shareDataInFragmentViewModel.sharedData.value = holder.binding.userName.text.toString()
-            shareDataInFragmentViewModel.getParentPostId.value = list[position].id
-            shareDataInFragmentViewModel.getParentTokenId.value =list[position].token
-       //     commentFragment.show((context as AppCompatActivity).supportFragmentManager,"Comments")
 
-          //  val bundle = Bundle()
-        //    bundle.putString("userName", name) // Replace "YourDataHere" with the actual data
+            if (!isNotification) {
+                val bundle = Bundle()
+                bundle.putString("authId", list[position].authId.toString())
+                bundle.putString("name", holder.binding.userName.text.toString())
+                bundle.putString("id", list[position].id.toString())
+                bundle.putString("token", list[position].token.toString())
 
-          //  commentFragment.arguments = bundle
+                // Set the result for the parent fragment
+                (context as AppCompatActivity).supportFragmentManager.setFragmentResult("data", bundle)
 
-            intentFragment(R.id.frag, commentFragment, context,"comment")
+                // Transition to the CommentFragment
+                val fragment = CommentFragment()
+                fragment.arguments = bundle // Pass the same bundle to the new fragment if needed
+
+                // Begin a fragment transaction to replace the current fragment with CommentFragment
+                (context as AppCompatActivity).supportFragmentManager.beginTransaction()
+                    .replace(R.id.frag, fragment, "comment")
+                    .addToBackStack(null) // Optional: Add to back stack if you want fragment navigation
+                    .commit()
+
+
+
+            //  context.setFragmentResult("requestKey", bundleOf("data" to result))
+//                CoroutineScope(Dispatchers.Main).launch {
+//                    delay(1000) // Optional delay
+//
+//                    // Set data in ViewModel
+//         //           shareDataInFragmentViewModel.setData(holder.binding.userName.text.toString(),list[position].id.toString(),list[position].token.toString(),list[position].authId.toString())
+//                }
+//                CoroutineScope(Dispatchers.Main).launch {
+//                    delay(1000) // Optional delay
+//
+//                    // Set data in ViewModel
+//                    shareDataInFragmentViewModel.parentPhoneNumber.value = list[position].authId
+//                    shareDataInFragmentViewModel.sharedData.value = holder.binding.userName.text.toString()
+//                    shareDataInFragmentViewModel.getParentPostId.value = list[position].id
+//                    shareDataInFragmentViewModel.getParentTokenId.value = list[position].token
+//
+//                    // Observe the LiveData changes
+//                    shareDataInFragmentViewModel.sharedData.observe(lifecycleOwner) { newData ->
+//                        // Data has been updated, now launch the fragment
+//                        val commentFragment = CommentFragment()
+//                        intentFragment(R.id.frag, commentFragment, context, "comment")
+//                    }
+//                }
+            }
+//                shareDataInFragmentViewModel.getParentPostId.value = list[position].id
+//                shareDataInFragmentViewModel.getParentTokenId.value = list[position].token
+//                shareDataInFragmentViewModel.parentPhoneNumber.value = list[position].authId
+
+                //  commentFragment.show((context as AppCompatActivity).supportFragmentManager,"Comments")
+
+
+//                val bundle = Bundle().apply {
+//                    putString("id",list[position].id)
+//                    putString("token",list[position].token)
+//                    putString("authId",list[position].authId)
+//                }
+//                commentFragment.arguments = bundle
+
+
+            else {
+                val intent = Intent(context, CommentActivity::class.java)
+                intent.putExtra("userName",holder.binding.userName.text.toString())
+                intent.putExtra("postId", list[position].id)
+
+                intent.putExtra("token",list[position].token.toString())
+                context.startActivity(intent)
+
+            }
         }
         holder.binding.postCard.setOnClickListener {
-            val bundle = Bundle().apply {
-                putString("name", holder.binding.userName.text.toString())
-                putString("number",list[position].authId)
-                putString("time",holder.binding.time.text.toString())
-                putString("id",list[position].id)
-                putString("postText",list[position].postText)
-                putString("likes",holder.binding.likeText.text.toString())
-                putString("comments",holder.binding.commentsNumber.text.toString())
-                putString("fakeImg", imgList[position])
-                putBoolean("isLike",holder.binding.likeBtn.isChecked)
-                putString("token",list[position].token.toString())
 
-               // Toast.makeText(context, holder.binding.likeBtn.isChecked.toString(), Toast.LENGTH_SHORT).show()
 
-                // Add more data as needed
-            }
-            val replyFragment = ReplyFragment()
-            replyFragment.arguments = bundle
-            intentFragment(R.id.frag,replyFragment,context,"replyFragment")
+               if (!isNotification) {
+                   val bundle = Bundle().apply {
+                       putString("name", holder.binding.userName.text.toString())
+                       putString("number",list[position].authId)
+                       putString("time",holder.binding.time.text.toString())
+                       putString("id",list[position].id)
+                       putString("postText",list[position].postText)
+                       putString("likes",holder.binding.likeText.text.toString())
+                       putString("comments",holder.binding.commentsNumber.text.toString())
+                       putString("fakeImg", imgList[position])
+                       putBoolean("isLike",holder.binding.likeBtn.isChecked)
+                       putString("token",list[position].token.toString())
+                       putString("path",list[position].path.toString())
+
+                       // Toast.makeText(context, holder.binding.likeBtn.isChecked.toString(), Toast.LENGTH_SHORT).show()
+
+                       // Add more data as needed
+                   }
+                   val replyFragment = ReplyFragment()
+                   replyFragment.arguments = bundle
+
+
+                   Toast.makeText(context, "noo", Toast.LENGTH_SHORT).show()
+                   intentFragment(R.id.frag, replyFragment, context, "replyFragment")
+               }else {
+                   Toast.makeText(context, "00", Toast.LENGTH_SHORT).show()
+                   val intent = Intent(context, SeeLikePostActivity::class.java)
+                   intent.putExtra("path", list[position].path)
+                   context.startActivity(intent)
+               }
+
+
 
         }
     }

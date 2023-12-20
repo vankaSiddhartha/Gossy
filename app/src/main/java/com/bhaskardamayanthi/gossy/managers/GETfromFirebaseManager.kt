@@ -39,6 +39,7 @@ class GETfromFirebaseManager {
                     callback(count,false)
                 }
                 if (type.equals("post")) {
+                    if (id.isNotEmpty())
                     DATABASE.child("post").child(id).child("likes").setValue(count)
                 }
             }
