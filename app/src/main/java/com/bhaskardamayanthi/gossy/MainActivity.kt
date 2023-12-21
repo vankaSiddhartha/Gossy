@@ -3,6 +3,7 @@ package com.bhaskardamayanthi.gossy
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.bhaskardamayanthi.gossy.account.AccountFragment
 import com.bhaskardamayanthi.gossy.anonymousPost.AnonymousPostFragment
 import com.bhaskardamayanthi.gossy.databinding.ActivityMainBinding
 import com.bhaskardamayanthi.gossy.localStore.StoreManager
@@ -56,6 +57,11 @@ class MainActivity : AppCompatActivity() {
                  intentFragment(R.id.frag,TrendingFragment(),this,"TrendingFragment")
                  true
              }
+                R.id.account->{
+                    binding.titleText.text= "Edit Account"
+                    intentFragment(R.id.frag,AccountFragment(),this,"TrendingFragment")
+                    true
+                }
                 else->{
                     true
                 }

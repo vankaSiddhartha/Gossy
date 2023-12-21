@@ -6,10 +6,12 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bhaskardamayanthi.gossy.R
@@ -25,6 +27,7 @@ import com.bhaskardamayanthi.gossy.managers.NameToProfileManager.textAsBitmap
 import com.bhaskardamayanthi.gossy.model.Contact
 import com.bhaskardamayanthi.gossy.model.UserModel
 import com.bhaskardamayanthi.gossy.polls.TagBottomFragment
+import com.bumptech.glide.Glide
 import com.google.firebase.auth.userProfileChangeRequest
 import java.util.Random
 import kotlin.properties.Delegates
@@ -38,7 +41,7 @@ class FindFriendAdapter(val context:Context):RecyclerView.Adapter<FindFriendAdap
         notifyDataSetChanged()
     }
     fun removeItem(position: Int) {
-//      list.removeAt(position)
+     // list.removeAt(position)
         notifyItemRemoved(position)
         notifyDataSetChanged()
     }
@@ -56,8 +59,10 @@ class FindFriendAdapter(val context:Context):RecyclerView.Adapter<FindFriendAdap
       return  list.size
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        var isFriend = true
+
+
         val firebaseDataManager = FirebaseDataManager()
         val geTfromFirebaseManager = GETfromFirebaseManager()
         val storeManager = StoreManager(context)
@@ -65,18 +70,21 @@ class FindFriendAdapter(val context:Context):RecyclerView.Adapter<FindFriendAdap
         val number = storeManager.getString("number", "")
         geTfromFirebaseManager.checkIfFriend(number, list[position].phone.toString()) { value ->
             if (value) {
-               holder.binding.friendCard.visibility = View.GONE
-            } else {
+                holder.binding.userAddSearch.visibility = View.INVISIBLE
+
+            }
+            if (list[position].profile.toString().isEmpty()){
                 val initial = getProfileInitial(list[position].name.toString())
 
-                val storeManager = StoreManager(context)
-                val userName = storeManager.getString("fakeName", "")
-                val number = storeManager.getString("number", "")
+
                 holder.binding.userNameSearch.text = list[position].name
                 val textColor = Color.GRAY // Text color
                 val backgroundColor = getRandomColor() // Random background color
                 val bitmap = textAsBitmap(initial, 20f, textColor, backgroundColor)
                 holder.binding.userProfileSearch.setImageBitmap(bitmap)
+            }else{
+                holder.binding.userNameSearch.text = list[position].name
+                Glide.with(context).load(list[position].profile).into(holder.binding.userProfileSearch)
             }
 
             holder.binding.userAddSearch.setOnClickListener {

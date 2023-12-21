@@ -12,6 +12,7 @@ import com.bhaskardamayanthi.gossy.MainActivity
 
 import com.bhaskardamayanthi.gossy.R
 import com.bhaskardamayanthi.gossy.databinding.ActivityPermissionBinding
+import com.bhaskardamayanthi.gossy.localStore.StoreManager
 
 class PermissionActivity : AppCompatActivity() {
     private lateinit var binding:ActivityPermissionBinding
@@ -20,6 +21,7 @@ class PermissionActivity : AppCompatActivity() {
         supportActionBar?.hide()
         binding = ActivityPermissionBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        val storeManager = StoreManager(this)
         val permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             arrayOf(
 
@@ -43,7 +45,7 @@ class PermissionActivity : AppCompatActivity() {
 
         }
         binding.upload.setOnClickListener {
-
+            storeManager.saveBoolean("new",true)
               startActivity(Intent(this,MainActivity::class.java))
 
       }

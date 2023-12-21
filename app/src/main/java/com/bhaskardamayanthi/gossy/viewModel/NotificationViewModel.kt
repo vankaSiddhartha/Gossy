@@ -19,6 +19,7 @@ class NotificationViewModel: ViewModel() {
 getNotificationData(userId)
     }
     private fun getNotificationData(userId:String){
+        isLoading.value = true
        database.child(userId).orderByChild("time").addValueEventListener(object :ValueEventListener{
            val data = mutableListOf<NotificationModel>()
            override fun onDataChange(snapshot: DataSnapshot) {
@@ -29,6 +30,7 @@ getNotificationData(userId)
                    }
                }
                liveData.value= data
+               isLoading.value =false
            }
 
            override fun onCancelled(error: DatabaseError) {

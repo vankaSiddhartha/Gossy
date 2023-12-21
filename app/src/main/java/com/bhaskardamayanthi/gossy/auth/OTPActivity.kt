@@ -7,21 +7,26 @@ import cn.pedant.SweetAlert.SweetAlertDialog
 import com.bhaskardamayanthi.gossy.managers.PhoneAuthManager
 import com.bhaskardamayanthi.gossy.databinding.ActivityOtpactivityBinding
 import com.bhaskardamayanthi.gossy.localStore.StoreManager
+import com.bhaskardamayanthi.gossy.managers.OTPTimerManager
+import com.bhaskardamayanthi.gossy.managers.TokenManager
 
 
-class OTPActivity : AppCompatActivity() {
+class  OTPActivity : AppCompatActivity(),OTPTimerManager.OnTimerTickListener{
     private lateinit var binding: ActivityOtpactivityBinding
+    private lateinit var otpManager:OTPTimerManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityOtpactivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        otpManager = OTPTimerManager(this@OTPActivity)
+
         val storeManager = StoreManager(this)
         val phoneNumber = "+91"+intent.getStringExtra("number")
         storeManager.saveString("number",phoneNumber)
 
 
-        val phoneAuthManager = PhoneAuthManager(this)
+        val phoneAuthManager = PhoneAuthManager(this,otpManager)
         if (phoneNumber.toString().isNotEmpty()) {
             phoneAuthManager.sendVerificationCode(phoneNumber?:"",this)
         }
@@ -37,12 +42,33 @@ class OTPActivity : AppCompatActivity() {
             }
         }
         binding.upload.setOnClickListener {
-            val intent = Intent(this@OTPActivity, UserDataActivity::class.java)
-
-            startActivity(intent)
+            if (storeManager.getBoolean("isLogin",false)) {
+                val intent = Intent(this@OTPActivity, FetchDataLoadingActivity::class.java)
+                startActivity(intent)
+            }else {
+                val token = TokenManager(this)
+                token.saveTokenLocally()
+                val intent = Intent(this@OTPActivity, UserDataActivity::class.java)
+                startActivity(intent)
+            }
         }
 
 
+    }
+    override fun onTick(secondsRemaining: Long) {
+        // Update UI with the remaining seconds
+        binding.otpTimmer.text = "Seconds remaining: $secondsRemaining"
+    }
+
+    override fun onFinish() {
+        // Handle timer completion
+        binding.otpTimmer.text = "Timer finished"
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // Cancel the timer to avoid memory leaks
+        otpManager.cancel()
     }
 
 

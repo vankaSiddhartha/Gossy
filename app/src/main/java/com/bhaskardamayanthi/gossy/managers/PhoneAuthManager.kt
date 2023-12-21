@@ -3,7 +3,6 @@ package com.bhaskardamayanthi.gossy.managers
 import android.app.Activity
 import android.content.Context
 import android.widget.Toast
-import androidx.cardview.widget.CardView
 import cn.pedant.SweetAlert.SweetAlertDialog
 import com.bhaskardamayanthi.gossy.loading.Loading.dismissDialogForLoading
 import com.bhaskardamayanthi.gossy.loading.Loading.showAlertDialogForLoading
@@ -15,38 +14,16 @@ import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
 import java.util.concurrent.TimeUnit
 
-class PhoneAuthManager(private val context: Context) {
+class PhoneAuthManager(private val context: Context, private val otpManager: OTPTimerManager) {
 
     private var verificationId: String = ""
-    private val mAuth: FirebaseAuth = FirebaseAuth.getInstance()
+   val  mAuth = FirebaseAuth.getInstance()
+    // mAuth.firebaseAuthSettings.setAppVerificationDisabledForTesting(true)
 
-    fun sendVerificationCode(phoneNumber: String) {
-        PhoneAuthProvider.getInstance().verifyPhoneNumber(
-            phoneNumber,
-            60,
-            TimeUnit.SECONDS,
-            context as Activity,
-            object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-                override fun onVerificationCompleted(phoneAuthCredential: PhoneAuthCredential) {
-                    // Automatically handle verification if the device is able to receive SMS
-                  //  signInWithPhoneAuthCredential(phoneAuthCredential)
-                }
 
-                override fun onVerificationFailed(e: FirebaseException) {
-                    Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
-                    dismissDialogForLoading()
-                }
-
-                override fun onCodeSent(s: String, forceResendingToken: PhoneAuthProvider.ForceResendingToken) {
-                    super.onCodeSent(s, forceResendingToken)
-                    verificationId = s
-                    // You can save the verificationId to use later
-                    Toast.makeText(context, "OTP Sent", Toast.LENGTH_SHORT).show()
-                }
-            }
-        )
-    }
     fun sendVerificationCode(phoneNumber: String, activity: Activity) {
+// set this to remove reCaptcha web
+
         showAlertDialogForLoading(context)
         val options = PhoneAuthOptions.newBuilder(FirebaseAuth.getInstance())
             .setPhoneNumber(phoneNumber)
@@ -71,6 +48,8 @@ class PhoneAuthManager(private val context: Context) {
                     // Store verification ID to use later
                     verificationId = s
                     Toast.makeText(activity, "OTP Sent", Toast.LENGTH_SHORT).show()
+
+                    otpManager.start()
                     dismissDialogForLoading()
                 }
             })

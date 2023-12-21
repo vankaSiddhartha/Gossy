@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SearchView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -16,9 +17,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bhaskardamayanthi.gossy.R
+import com.bhaskardamayanthi.gossy.adapter.ChooseCollageAdapter
 import com.bhaskardamayanthi.gossy.adapter.FindFriendAdapter
 import com.bhaskardamayanthi.gossy.databinding.FragmentFindFriendBinding
+import com.bhaskardamayanthi.gossy.managers.GETfromFirebaseManager
+import com.bhaskardamayanthi.gossy.model.CollageModel
 import com.bhaskardamayanthi.gossy.model.Contact
+import com.bhaskardamayanthi.gossy.model.UserModel
 import com.bhaskardamayanthi.gossy.viewModel.FindFragmentViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -30,12 +35,14 @@ class FindFriendFragment : Fragment() {
     private lateinit var binding: FragmentFindFriendBinding
     private lateinit var viewModel: FindFragmentViewModel
     private val REQUEST_CONTACTS_PERMISSION = 123
+    private lateinit var  list:List<UserModel>
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
 
         binding = FragmentFindFriendBinding.inflate(layoutInflater, container, false)
+        binding.shimmer.startShimmer()
         viewModel = ViewModelProvider(requireActivity())[FindFragmentViewModel::class.java]
         val adapter = FindFriendAdapter(requireContext())
         binding.findFriendRv.addItemDecoration(
@@ -49,8 +56,17 @@ class FindFriendFragment : Fragment() {
 
         viewModel.dataList.observe(requireActivity()) { data ->
 
+            list = data
             adapter.updateData(data)
 
+
+        }
+        viewModel.isLoding.observe(requireActivity()){isLoading->
+            if (!isLoading){
+                binding.shimmer.hideShimmer()
+                binding.findFriendRv.visibility = View.VISIBLE
+                binding.shimmer.visibility= View.GONE
+            }
 
         }
         if (ContextCompat.checkSelfPermission(
@@ -70,6 +86,32 @@ class FindFriendFragment : Fragment() {
             } // Pass the context here
 
         }
+        binding.searchView.setOnQueryTextListener(object  : SearchView.OnQueryTextListener{
+            override fun onQueryTextSubmit(query: String?): Boolean {
+
+                return false
+
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                if (newText != null) {
+                    val filteredList = ArrayList<UserModel>()
+                    for (i in list) {
+                        if (i.name!!.contains(newText,ignoreCase = true)) {
+                            filteredList.add(i)
+                        }
+                    }
+
+                    if (filteredList.isNotEmpty()) {
+                        adapter.updateData(filteredList)
+                    }
+                }
+
+                return true
+            }
+
+
+        })
 
 
         return binding.root

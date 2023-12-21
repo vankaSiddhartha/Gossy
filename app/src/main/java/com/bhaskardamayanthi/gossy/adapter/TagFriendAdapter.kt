@@ -15,6 +15,7 @@ import com.bhaskardamayanthi.gossy.managers.NameToProfileManager
 import com.bhaskardamayanthi.gossy.model.FriendsModel
 import com.bhaskardamayanthi.gossy.model.QuestionModel
 import com.bhaskardamayanthi.gossy.model.UserModel
+import com.bumptech.glide.Glide
 
 class TagFriendAdapter(val context: Context):RecyclerView.Adapter<TagFriendAdapter.ViewModel>() {
     var list = mutableListOf<UserModel>()
@@ -40,16 +41,22 @@ class TagFriendAdapter(val context: Context):RecyclerView.Adapter<TagFriendAdapt
     override fun onBindViewHolder(holder: ViewModel, position: Int) {
         val firebaseDataManager = FirebaseDataManager()
         val storeManager = StoreManager(context)
+
         val userId = storeManager.getString("number","")
         val gender = storeManager.getString("sex","")
-        val initial = NameToProfileManager.getProfileInitial(list[position].name.toString())
+
        // Toast.makeText(context, list[position].toString(), Toast.LENGTH_SHORT).show()
         holder.binding.userNameSearch.text = list[position].name
-        val textColor = Color.GRAY // Text color
-       val backgroundColor = NameToProfileManager.getRandomColor() // Random background color
+        if (list[position].profile.toString().isEmpty()) {
+            val initial = NameToProfileManager.getProfileInitial(list[position].name.toString())
+            val textColor = Color.GRAY // Text color
+            val backgroundColor = NameToProfileManager.getRandomColor() // Random background color
 
-       val bitmap = NameToProfileManager.textAsBitmap(initial, 20f, textColor, backgroundColor)
-       holder.binding.userProfileSearch.setImageBitmap(bitmap)
+            val bitmap = NameToProfileManager.textAsBitmap(initial, 20f, textColor, backgroundColor)
+            holder.binding.userProfileSearch.setImageBitmap(bitmap)
+        }else{
+            Glide.with(context).load(list[position].profile).into(holder.binding.userProfileSearch)
+        }
         holder.binding.tag.setOnClickListener{
             Toast.makeText(context, "sending to... "+list[position].name, Toast.LENGTH_SHORT).show()
             if (gender=="male") {

@@ -33,6 +33,7 @@ private lateinit var viewModel:TrendingViewModel
         binding.recyclerView.addItemDecoration(DividerItemDecoration(binding.recyclerView.context, DividerItemDecoration.VERTICAL))
         binding.recyclerView.layoutManager= LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = adapter
+        binding.shimmer.startShimmer()
 
         viewModel.dataList.observe(requireActivity()) { data ->
             val sortedByLikesDescending =    data.sortedByDescending { it.likes }
@@ -40,6 +41,14 @@ private lateinit var viewModel:TrendingViewModel
             adapter.setData(sortedByLikesDescending)
 
 
+
+        }
+        viewModel.isLoading.observe(requireActivity()){isLoding->
+            if (!isLoding){
+                binding.shimmer.hideShimmer()
+                binding.recyclerView.visibility = View.VISIBLE
+                binding.shimmer.visibility = View.GONE
+            }
 
         }
         return binding.root

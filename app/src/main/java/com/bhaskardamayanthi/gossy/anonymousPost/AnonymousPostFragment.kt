@@ -22,9 +22,11 @@ private lateinit var viewModel: AnonymousPostViewModel
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
         viewModel = ViewModelProvider(requireActivity())[AnonymousPostViewModel::class.java]
         val shareDataInFragmentViewModel = ViewModelProvider(requireActivity())[ShareDataInFragmentViewModel::class.java]
         binding = FragmentAnonymousPostBinding.inflate(layoutInflater,container,false)
+        binding.shimmer.startShimmer()
         val adapter = AnonymousPostAdapter(requireContext(),shareDataInFragmentViewModel,false,viewLifecycleOwner)
         binding.recyclerView.addItemDecoration(DividerItemDecoration(binding.recyclerView.context, DividerItemDecoration.VERTICAL))
         binding.recyclerView.layoutManager= LinearLayoutManager(requireContext())
@@ -36,6 +38,14 @@ private lateinit var viewModel: AnonymousPostViewModel
             adapter.type("post")
 
 
+
+        }
+        viewModel.isLoading.observe(requireActivity()){isLoding->
+            if (!isLoding){
+                binding.shimmer.hideShimmer()
+                binding.recyclerView.visibility = View.VISIBLE
+                binding.shimmer.visibility = View.GONE
+            }
 
         }
 

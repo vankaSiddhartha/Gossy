@@ -25,13 +25,21 @@ private lateinit var viewModel:PollsViewMode
 
         binding = FragmentPollBinding.inflate(layoutInflater,container,false)
         viewModel = ViewModelProvider(requireActivity())[PollsViewMode::class.java]
+        binding.shimmer.startShimmer()
         val adapter = PollAdapter(requireContext())
         binding.pollsVp.adapter = adapter
         viewModel.getQuestionData.observe(viewLifecycleOwner){data->
             adapter.updateList(data)
             //Toast.makeText(requireContext(),data.toString(), Toast.LENGTH_SHORT).show()
         }
+    viewModel.isLoading.observe(requireActivity()){isLoading->
+        if (!isLoading){
+            binding.shimmer.hideShimmer()
+            binding.pollsVp.visibility = View.VISIBLE
+            binding.shimmer.visibility = View.GONE
+        }
 
+    }
         return binding.root
     }
 

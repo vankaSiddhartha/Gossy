@@ -27,7 +27,7 @@ class TokenManager(private val context: Context) {
             }
     }
 
-    private fun saveToken(token: String?) {
+     fun saveToken(token: String?) {
         token?.let {
             with(sharedPreferences.edit()) {
                 putString(FCM_TOKEN_KEY, it)

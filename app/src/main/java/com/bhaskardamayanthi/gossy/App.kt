@@ -3,6 +3,7 @@ package com.bhaskardamayanthi.gossy
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import com.bhaskardamayanthi.gossy.localStore.StoreManager
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.messaging.FirebaseMessaging
 
 class App:Application() {
@@ -13,5 +14,7 @@ class App:Application() {
         val getCollege = storeManager.getString("college","")
         val topic ="/topics/$getCollege"
         FirebaseMessaging.getInstance().subscribeToTopic(topic)
+
+
     }
 }

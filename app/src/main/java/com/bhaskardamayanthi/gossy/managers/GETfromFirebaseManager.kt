@@ -1,7 +1,9 @@
 package com.bhaskardamayanthi.gossy.managers
 
 import android.content.Context
-import android.widget.Toast
+import android.content.Intent
+import com.bhaskardamayanthi.gossy.auth.PermissionActivity
+import com.bhaskardamayanthi.gossy.localStore.StoreManager
 import com.bhaskardamayanthi.gossy.model.UserModel
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -11,11 +13,23 @@ import com.google.firebase.ktx.Firebase
 
 class GETfromFirebaseManager {
     fun getUserDataAndSaveInLocalData(uid:String,context: Context){
+        val storeManager = StoreManager(context)
+        val tokenManager = TokenManager(context)
         val DATABASE = Firebase.database("https://gossy-fbbcf-default-rtdb.asia-southeast1.firebasedatabase.app/").reference
         DATABASE.child("users").child(uid).addListenerForSingleValueEvent(object : ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
                 val userData = snapshot.getValue(UserModel::class.java)
-                Toast.makeText(context, userData.toString(), Toast.LENGTH_SHORT).show()
+                storeManager.saveString("name",userData?.name.toString())
+
+                 storeManager.saveString("sex",userData?.gender.toString())
+                 storeManager.saveString("fakeName",userData?.fakeName.toString())
+                storeManager.saveString("fakeImg",userData?.fakeImg.toString())
+                storeManager.saveString("dobYear",userData?.dob.toString())
+              storeManager.saveString("college",userData?.collegeName.toString())
+                tokenManager.saveToken(userData?.fcmToken.toString())
+                storeManager.saveString("number",userData?.phone.toString())
+                context.startActivity(Intent(context, PermissionActivity::class.java))
+
 
             }
 

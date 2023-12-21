@@ -25,8 +25,8 @@ class WelcomeAccountActivity : AppCompatActivity() {
 
         binding = ActivityWelcomeAccountBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val token = TokenManager(this)
-        token.saveTokenLocally()
+        val storeManager = StoreManager(this)
+
       val textView =binding.loginText
         val blueColor = ForegroundColorSpan(Color.BLUE)
         val spannableString = SpannableString(textView.text)
@@ -49,10 +49,12 @@ class WelcomeAccountActivity : AppCompatActivity() {
 
         textView.text = spannableString
         binding.loginText.setOnClickListener {
-            startActivity(Intent(this,PermissionActivity::class.java))
+            startActivity(Intent(this,PhoneAuthActivity::class.java))
+            storeManager.saveBoolean("isLogin",true)
         }
         binding.upload.setOnClickListener {
             startActivity(Intent(this,PhoneAuthActivity::class.java))
+            storeManager.saveBoolean("isLogin",false)
         }
     }
 

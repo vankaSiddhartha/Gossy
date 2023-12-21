@@ -28,10 +28,11 @@ private lateinit var binding:FragmentNameBinding
 
         binding.upload.setOnClickListener {
 
+
             onClick()
         }
 
-        binding.name.addTextChangedListener(object : TextWatcher {
+        binding.name2.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                 // Not used, but required by TextWatcher interface
             }
@@ -62,10 +63,12 @@ private lateinit var binding:FragmentNameBinding
     private fun onClick(){
         val storeManager = StoreManager(requireContext())
         val name = binding.name.text.toString()
-        if (name.isNotEmpty())
+        val secondName = binding.name2.text.toString()
+        if (name.isNotEmpty()&&secondName.isNotEmpty())
         {
             storeManager.saveString("name",name)
-            storeManager.saveBoolean("new",true)
+            storeManager.saveString("name1",binding.name.text.toString())
+            storeManager.saveString("name2",binding.name2.text.toString())
             navigateToNextFragment(DOBYearPickerFragment())
 
         }else{

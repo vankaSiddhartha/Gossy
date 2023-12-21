@@ -30,7 +30,7 @@ class PollsViewMode: ViewModel() {
   }
     @RequiresApi(Build.VERSION_CODES.O)
     private fun getQuestions(){
-        isLoading.value= false
+        isLoading.value= true
 
         val data = mutableListOf<QuestionModel>()
         database.addListenerForSingleValueEvent(object :ValueEventListener{
@@ -43,6 +43,7 @@ class PollsViewMode: ViewModel() {
                 Log.e("vankaSiddhartha",snapshot.toString())
             }
                 getQuestionData.value = data
+                isLoading.value = false
 
             }
 

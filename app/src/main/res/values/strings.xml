@@ -40,4 +40,7 @@
     <string name="what_s_happening">What\'s happening?</string>
     <string name="search">Search</string>
     <string name="trending">Trending</string>
+    <string name="upload_image">Upload image</string>
+    <string name="eg_vanka">eg Vanka</string>
+    <string name="up">up</string>
 </resources>

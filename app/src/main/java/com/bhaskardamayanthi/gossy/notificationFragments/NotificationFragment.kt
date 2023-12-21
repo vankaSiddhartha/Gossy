@@ -28,6 +28,7 @@ class NotificationFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
          binding = FragmentNotificationBinding.inflate(layoutInflater,container,false)
+        binding.shimmer.startShimmer()
         viewModel = ViewModelProvider(requireActivity())[NotificationViewModel::class.java]
         val number = StoreManager(requireContext()).getString("number","")
         val adapter = NotificationAdapter(requireContext())
@@ -41,6 +42,14 @@ class NotificationFragment : Fragment() {
         binding.recyclerView.adapter = adapter
         viewModel.liveData.observe(viewLifecycleOwner){newData->
             adapter.updateData(newData)
+        }
+        viewModel.isLoading.observe(requireActivity()){isLoading->
+            if (!isLoading){
+                binding.shimmer.hideShimmer()
+                binding.recyclerView.visibility = View.VISIBLE
+                binding.shimmer.visibility = View.GONE
+            }
+
         }
         return binding.root
     }

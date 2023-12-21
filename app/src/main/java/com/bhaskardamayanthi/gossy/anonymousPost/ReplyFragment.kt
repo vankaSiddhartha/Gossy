@@ -40,6 +40,7 @@ private lateinit var binding:FragmentReplyBinding
         viewModel = ViewModelProvider(requireActivity())[ReplyFragmentViewModel::class.java]
         val shareDataInFragmentViewModel = ViewModelProvider(requireActivity())[ShareDataInFragmentViewModel::class.java]
         binding = FragmentReplyBinding.inflate(layoutInflater,container,false)
+        binding.shimmer.startShimmer()
         val postId = arguments?.getString("id")
         val path = arguments?.getString("path")
         val token = arguments?.getString("token")
@@ -97,7 +98,6 @@ private lateinit var binding:FragmentReplyBinding
 
         binding.likeBtn.isChecked = checked
         viewModel.fetchDataForPost(postId.toString())
-
         binding.commentsRv.addItemDecoration(DividerItemDecoration(binding.commentsRv.context, DividerItemDecoration.VERTICAL))
         binding.commentsRv.layoutManager = LinearLayoutManager(requireContext())
         val adapter = AnonymousPostAdapter(requireContext(),shareDataInFragmentViewModel,false,viewLifecycleOwner)
@@ -106,6 +106,15 @@ private lateinit var binding:FragmentReplyBinding
             adapter.setData(data)
             adapter.type("comment")
             //Toast.makeText(requireContext(), data.toString(), Toast.LENGTH_SHORT).show()
+        }
+        viewModel.isLoading.observe(requireActivity()){isLoding->
+            if (!isLoding){
+                binding.shimmer.hideShimmer()
+                binding.shimmer.visibility = View.GONE
+                binding.commentsRv.visibility = View.VISIBLE
+
+            }
+
         }
 //        binding.likeBtn.setOnCheckedChangeListener { buttonView, isChecked ->
 //            if (isChecked) {
