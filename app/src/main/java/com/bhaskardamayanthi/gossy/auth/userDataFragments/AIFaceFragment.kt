@@ -50,8 +50,8 @@ private lateinit var saveFakeProfile:String
 
         val storeManager = StoreManager(requireContext())
         val newId = Random.nextInt(100).toString()
-        val firstNameIndex = Random.nextInt(50)
-        val secondNameIndex = Random.nextInt(50)
+        val firstNameIndex = Random.nextInt(aiNames.firstNames.size-1)
+        val secondNameIndex = Random.nextInt(aiNames.lastNames.size-1)
         val fakeName = aiNames.firstNames.get(firstNameIndex)+aiNames.lastNames.get(secondNameIndex)+newId
         saveFakeName = fakeName
 

@@ -32,8 +32,10 @@ import com.bhaskardamayanthi.gossy.notificationSee.CommentActivity
 import com.bhaskardamayanthi.gossy.notificationSee.SeeLikePostActivity
 import com.bhaskardamayanthi.gossy.viewModel.ShareDataInFragmentViewModel
 import com.bumptech.glide.Glide
+import com.google.android.gms.tasks.Task
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -41,9 +43,14 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import java.lang.Exception
 import java.util.Calendar
 import java.util.Locale
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 class AnonymousPostAdapter(val context:Context,val shareDataInFragmentViewModel: ShareDataInFragmentViewModel,val isNotification:Boolean,private val lifecycleOwner: LifecycleOwner):RecyclerView.Adapter<AnonymousPostAdapter.ViewHolder>() {
     private var list: List<PostModel> = emptyList()
@@ -81,13 +88,29 @@ class AnonymousPostAdapter(val context:Context,val shareDataInFragmentViewModel:
 
         val geTfromFirebaseManager = GETfromFirebaseManager()
         val firebaseDataManager = FirebaseDataManager()
-        getUserName(list[position].authId.toString()) { fake_name, fake_img ->
-            holder.binding.userName.text = fake_name
-            name = fake_name
-            imgList[position] = fake_img
-            Glide.with(context).load(fake_img).into(holder.binding.postProfile)
+//        getUserName(list[position].authId.toString()) { fake_name, fake_img ->
+//            holder.binding.userName.text = fake_name
+//            name = fake_name
+//            imgList[position] = fake_img
+//            Glide.with(context).load(fake_img).into(holder.binding.postProfile)
+//
+//
+//        }
+// Inside a CoroutineScope
 
 
+
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                val (fakeName, fakeImg) = getUserName(list[position].authId.toString())
+                // Use fakeName and fakeImg here
+                holder.binding.userName.text = fakeName
+                imgList[position] = fakeImg
+                name = fakeName
+                Glide.with(context).load(fakeImg).into(holder.binding.postProfile)
+            } catch (e: Exception) {
+                Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+            }
         }
 
       //  holder.binding.postText.text = list[position].postText
@@ -257,40 +280,40 @@ class AnonymousPostAdapter(val context:Context,val shareDataInFragmentViewModel:
     }
 
 
-    private fun getUserName(number: String, callback: (name: String, fakeImg: String) -> Unit) {
-        val database = Firebase.database("https://gossy-fbbcf-default-rtdb.asia-southeast1.firebasedatabase.app/")
-            .reference
-            .child("users")
-            .child(number.toString())
-
-
-        database.child("fakeImg").addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val fakeImg = snapshot.value.toString()
-
-                // Assuming fake name is stored in a different node or child
-                val nameReference = database.child("fakeName")
-
-
-                nameReference.addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(nameSnapshot: DataSnapshot) {
-                        val fakeName = nameSnapshot.value.toString()
-
-                        // Callback with fake name and fake image
-                        callback(fakeName, fakeImg)
-                    }
-
-                    override fun onCancelled(error: DatabaseError) {
-                        // Handle onCancelled for fake name retrieval
-                    }
-                })
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                // Handle onCancelled for fake image retrieval
-            }
-        })
-    }
+//    private fun getUserName(number: String, callback: (name: String, fakeImg: String) -> Unit) {
+//        val database = Firebase.database("https://gossy-fbbcf-default-rtdb.asia-southeast1.firebasedatabase.app/")
+//            .reference
+//            .child("users")
+//            .child(number.toString())
+//
+//
+//        database.child("fakeImg").addListenerForSingleValueEvent(object : ValueEventListener {
+//            override fun onDataChange(snapshot: DataSnapshot) {
+//                val fakeImg = snapshot.value.toString()
+//
+//                // Assuming fake name is stored in a different node or child
+//                val nameReference = database.child("fakeName")
+//
+//
+//                nameReference.addListenerForSingleValueEvent(object : ValueEventListener {
+//                    override fun onDataChange(nameSnapshot: DataSnapshot) {
+//                        val fakeName = nameSnapshot.value.toString()
+//
+//                        // Callback with fake name and fake image
+//                        callback(fakeName, fakeImg)
+//                    }
+//
+//                    override fun onCancelled(error: DatabaseError) {
+//                        // Handle onCancelled for fake name retrieval
+//                    }
+//                })
+//            }
+//
+//            override fun onCancelled(error: DatabaseError) {
+//                // Handle onCancelled for fake image retrieval
+//            }
+//        })
+//    }
     private fun getRemainingTime(dateString: String): String {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
         val date = dateFormat.parse(dateString)
@@ -343,5 +366,25 @@ class AnonymousPostAdapter(val context:Context,val shareDataInFragmentViewModel:
         return stringBuilder.toString()
     }
 
+
+    suspend fun getFakeImg(database: DatabaseReference): String = withContext(Dispatchers.IO) {
+        database.child("fakeImg").get().await().value.toString()
+    }
+
+    suspend fun getFakeName(database: DatabaseReference): String = withContext(Dispatchers.IO) {
+        database.child("fakeName").get().await().value.toString()
+    }
+
+    suspend fun getUserName(number: String): Pair<String, String> = withContext(Dispatchers.IO) {
+        val database = Firebase.database("https://gossy-fbbcf-default-rtdb.asia-southeast1.firebasedatabase.app/")
+            .reference
+            .child("users")
+            .child(number)
+
+        val fakeImg = getFakeImg(database)
+        val fakeName = getFakeName(database)
+
+        Pair(fakeName, fakeImg)
+    }
 
 }

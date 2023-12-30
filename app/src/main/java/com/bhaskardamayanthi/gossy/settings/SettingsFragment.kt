@@ -24,7 +24,7 @@ private lateinit var binding:FragmentSettingsBinding
         val storeManager = StoreManager(requireContext())
         val  name = storeManager.getString("name","")
         val fakeName = storeManager.getString("fakeName","")
-        val fakeProfile = storeManager.getString("fakeProfile","")
+        val fakeProfile = storeManager.getString("fakeImg","")
         val profile = storeManager.getString("profile","")
 
         val settingsList: List<Pair<String, String>> = listOf(
@@ -36,18 +36,20 @@ private lateinit var binding:FragmentSettingsBinding
             "Profile" to profile,
             "Gossy Profile" to fakeProfile,
             "Support" to "",
-            "Help Center" to "",
-            "Terms of Service" to "",
-            "Privacy Policy" to "Pri",
+            "Help Center" to "https://gossy.vercel.app/help-center",
+            "Terms of Service" to "https://gossy.vercel.app/terms-of-service",
+            "Privacy Policy" to "https://gossy.vercel.app/privacy-policy",
             "Company" to "",
-            "About" to "",
-            "Company Blogs" to "",
-            "Careers" to "",
-            "Feedback" to "",
+            "About" to "https://gossy.vercel.app/about",
+            "Company Blogs" to "https://gossy.vercel.app/blogs",
+            "Careers" to "https://gossy.vercel.app/careers",
+            "Feedback" to "https://gossy.vercel.app/contact",
             "Follow Us" to "",
             "Twitter" to "",
             "Instagram" to "",
-            "LinkedIn" to ""
+            "LinkedIn" to "",
+            "Website" to "",
+            "Gossy website" to "https://gossy.vercel.app/"
 
 
 
