@@ -46,6 +46,7 @@ private lateinit var binding:FragmentUploadPostBinding
         val storeManager = StoreManager(requireContext())
         val firebaseDataManager = FirebaseDataManager()
         val notificationToAll = NotificationToAll()
+        val fakeName = storeManager.getString("fakeName","")
         val fakeImg = storeManager.getString("fakeImg","")
         val number = storeManager.getString("number","0")
         val token = TokenManager(requireContext()).getSavedToken()
@@ -53,7 +54,7 @@ private lateinit var binding:FragmentUploadPostBinding
 
         binding.postBtn.setOnClickListener {
 
-            notificationToAll.sendNotificationToAll("test","test","/topics/myTopic2")
+            notificationToAll.sendNotificationToAll("$fakeName new message",binding.postEt.text.toString(),"/topics/myTopic2")
             if (binding.postEt.text.toString().isNotEmpty()){
                 val postId = UUID.randomUUID().toString()
                 val path  = "post/$postId"

@@ -19,6 +19,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.bhaskardamayanthi.gossy.MainActivity
 import com.bhaskardamayanthi.gossy.R
 import com.bhaskardamayanthi.gossy.databinding.ActivitySeetThePollBinding
 import com.bhaskardamayanthi.gossy.localStore.StoreManager
@@ -40,7 +41,11 @@ class SeeThePollActivity : AppCompatActivity() {
         binding = ActivitySeetThePollBinding.inflate(layoutInflater)
         supportActionBar?.hide()
         setContentView(binding.root)
-
+        binding.back.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            intent.putExtra("key","noti")
+            startActivity(intent)
+        }
         val storeManager = StoreManager(this)
         binding.cardView6.setOnClickListener {
          permission()
@@ -51,18 +56,20 @@ class SeeThePollActivity : AppCompatActivity() {
         binding.questionTv.text = getQuestion
         binding.genderTitle.text = getGenderTittle
         binding.tagTv.text = "@" + name
-        if (getGenderTittle == "male") {
+        if (getGenderTittle != null) {
+            if (getGenderTittle.contains("boy")) {
 
 
-            val color = ContextCompat.getColor(this, R.color.blue) // Use your color resource
-            binding.layout.setBackgroundColor(color)
+                val color = ContextCompat.getColor(this, R.color.blue) // Use your color resource
+                binding.layout.setBackgroundColor(color)
 
-            binding.emojiId.text = "🧑‍🦱"
-        } else {
+                binding.emojiId.text = "🧑‍🦱"
+            } else {
 
-            binding.emojiId.text = "👩"
-            val color = ContextCompat.getColor(this, R.color.pink) // Use your color resource
-            binding.layout.setBackgroundColor(color)
+                binding.emojiId.text = "👩"
+                val color = ContextCompat.getColor(this, R.color.pink) // Use your color resource
+                binding.layout.setBackgroundColor(color)
+            }
         }
 
 
@@ -71,6 +78,7 @@ class SeeThePollActivity : AppCompatActivity() {
         binding.snapchat.setOnClickListener {
 
             takeScreenshotAndShareToSnapchat()
+           // permission()
         }
         binding.instagram.setOnClickListener {
             takeScreenshotAndShareToInstagram()
@@ -89,7 +97,7 @@ class SeeThePollActivity : AppCompatActivity() {
 //        shareToInstagramStory(screenshotBitmap)
 //    }
 private fun takeScreenshotAndShareToInstagram() {
-    permission()
+
     val rootView: View = window.decorView.rootView
 
     // Create a bitmap of the current screen content

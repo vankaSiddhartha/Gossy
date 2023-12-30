@@ -48,6 +48,11 @@ class SeeLikePostActivity : AppCompatActivity(){
          viewModel = ViewModelProvider(this)[ReplyFragmentViewModel::class.java]
         binding = ActivitySeeLikePostBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.back.setOnClickListener {
+            val intent = Intent(this,MainActivity::class.java)
+             intent.putExtra("key","noti")
+            startActivity(intent)
+        }
         val firebaseDataManager = FirebaseDataManager()
         val storeManager = StoreManager(this)
         val number = storeManager.getString("number", "")

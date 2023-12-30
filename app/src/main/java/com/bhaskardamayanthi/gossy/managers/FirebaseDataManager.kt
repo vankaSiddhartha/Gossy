@@ -166,6 +166,7 @@ class FirebaseDataManager {
     }
     @RequiresApi(Build.VERSION_CODES.O)
     fun sendPollAndLikeAndPostNotifications(userId: String, friendsId: String, type:String, title: String, message: String, token: String){
+        val geTfromFirebaseManager = GETfromFirebaseManager()
         val currentDateTime = LocalDateTime.now()
         val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")
         Log.e("NumberBro",friendsId)
@@ -174,15 +175,18 @@ class FirebaseDataManager {
         val data = NotificationModel(notificationId,type,title,message,friendsId,userId,formattedDateTime)
         val DATABASE = Firebase.database("https://gossy-fbbcf-default-rtdb.asia-southeast1.firebasedatabase.app/").reference.child("notifications")
         DATABASE.child(friendsId).child(notificationId).setValue(data).addOnSuccessListener {
+
             PushNotifications(
                 NotificationData(title, message),
                 token
             ).also {
                 sendNotification(it)
             }
+
         }
 
     }
+
 
 
 }

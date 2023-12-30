@@ -14,6 +14,8 @@ import com.bhaskardamayanthi.gossy.managers.GETfromFirebaseManager
 import com.bhaskardamayanthi.gossy.managers.TokenManager
 import com.bhaskardamayanthi.gossy.model.UserModel
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 
 class FetchDataLoadingActivity : AppCompatActivity() {
     private lateinit var binding:ActivityFetchDataLoadingBinding
@@ -28,13 +30,19 @@ class FetchDataLoadingActivity : AppCompatActivity() {
         val userId = FirebaseAuth.getInstance().currentUser?.phoneNumber
         val firebaseDataManager =FirebaseDataManager()
         val token =TokenManager(this)
+        val fcmToken =token.getSavedToken().toString()
 
         if (storeManager.getBoolean("isLogin",false)){
+            val DATABASE = Firebase.database("https://gossy-fbbcf-default-rtdb.asia-southeast1.firebasedatabase.app/").reference
+            DATABASE.child("users").child(number).child("fcmToken").setValue(fcmToken).addOnSuccessListener {
 
-            val geTfromFirebaseManager = GETfromFirebaseManager()
-            geTfromFirebaseManager.getUserDataAndSaveInLocalData(number,this)
-            Toast.makeText(this, "login", Toast.LENGTH_SHORT).show()
 
+                val geTfromFirebaseManager = GETfromFirebaseManager()
+                geTfromFirebaseManager.getUserDataAndSaveInLocalData(number, this)
+                Toast.makeText(this, "login", Toast.LENGTH_SHORT).show()
+
+
+            }
         }else{
             val name = storeManager.getString("name","")
             val sex = storeManager.getString("sex","")
@@ -42,7 +50,6 @@ class FetchDataLoadingActivity : AppCompatActivity() {
             val fakeImg = storeManager.getString("fakeImg","")
             val dob = storeManager.getString("dobYear","")
             val collegeName = storeManager.getString("college","")
-            val fcmToken =token.getSavedToken().toString()
             val phoneNumber = storeManager.getString("number","")
 
             val newUserData = UserModel(collegeName,sex,name,phoneNumber,"",dob,fakeName,fakeImg,fcmToken)

@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.bhaskardamayanthi.gossy.MainActivity.Companion.getNotiList
 import com.bhaskardamayanthi.gossy.R
 import com.bhaskardamayanthi.gossy.databinding.NotificationItemBinding
 import com.bhaskardamayanthi.gossy.localStore.StoreManager
@@ -20,12 +21,13 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-class NotificationAdapter(val context:Context):RecyclerView.Adapter<NotificationAdapter.ViewHolder>() {
-    var list = mutableListOf<NotificationModel>()
-    fun updateData(newList:MutableList<NotificationModel>){
-        list = newList
-        notifyDataSetChanged()
-    }
+class NotificationAdapter(val context:Context,val list:MutableList<NotificationModel>):RecyclerView.Adapter<NotificationAdapter.ViewHolder>() {
+//    var list = mutableListOf<NotificationModel>()
+//    fun updateData(newList:MutableList<NotificationModel>){
+//        list.clear()
+//        list.addAll(newList)
+//        notifyDataSetChanged()
+//    }
     inner class ViewHolder(val binding:NotificationItemBinding):RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -40,7 +42,7 @@ class NotificationAdapter(val context:Context):RecyclerView.Adapter<Notification
         val storeManager =StoreManager(context)
         val number = storeManager.getString("number","")
         val geTfromFirebaseManager = GETfromFirebaseManager()
-        //geTfromFirebaseManager.seen(number,list[position].notificationId.toString())
+
 
         if (list[position].type=="poll"){
             if (list[position].title!!.contains("girl")){
@@ -54,13 +56,20 @@ class NotificationAdapter(val context:Context):RecyclerView.Adapter<Notification
         }
 
         val grey = Color.GRAY
+        val  white = Color.WHITE
 
         holder.binding.notificationText.text =list[position].title
         holder.binding.timeText.text = getRemainingTime(list[position].time.toString()).toString()
         if (   list[position].seen){
             holder.binding.notificationCard.setCardBackgroundColor(grey)
+        }else{
+            holder.binding.notificationCard.setCardBackgroundColor(white)
         }
         holder.binding.notificationCard.setOnClickListener {
+            geTfromFirebaseManager.seen(number,list[position].notificationId.toString())
+
+            //notifyItemRangeChanged(0,position)
+            notifyDataSetChanged()
             if (list[position].type=="poll") {
                 val intent = Intent(context, SeeThePollActivity::class.java)
                 intent.putExtra("question", list[position].message)

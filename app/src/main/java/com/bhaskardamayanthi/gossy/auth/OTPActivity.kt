@@ -9,6 +9,8 @@ import com.bhaskardamayanthi.gossy.databinding.ActivityOtpactivityBinding
 import com.bhaskardamayanthi.gossy.localStore.StoreManager
 import com.bhaskardamayanthi.gossy.managers.OTPTimerManager
 import com.bhaskardamayanthi.gossy.managers.TokenManager
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 
 
 class  OTPActivity : AppCompatActivity(),OTPTimerManager.OnTimerTickListener{
@@ -43,6 +45,9 @@ class  OTPActivity : AppCompatActivity(),OTPTimerManager.OnTimerTickListener{
         }
         binding.upload.setOnClickListener {
             if (storeManager.getBoolean("isLogin",false)) {
+                val token = TokenManager(this)
+                token.saveTokenLocally()
+
                 val intent = Intent(this@OTPActivity, FetchDataLoadingActivity::class.java)
                 startActivity(intent)
             }else {

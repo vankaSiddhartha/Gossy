@@ -1,5 +1,6 @@
 package com.bhaskardamayanthi.gossy.notificationFragments
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -8,6 +9,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bhaskardamayanthi.gossy.MainActivity.Companion.getNotiList
 import com.bhaskardamayanthi.gossy.R
 import com.bhaskardamayanthi.gossy.adapter.AnonymousPostAdapter
 import com.bhaskardamayanthi.gossy.adapter.NotificationAdapter
@@ -21,6 +23,8 @@ import com.bhaskardamayanthi.gossy.viewModel.NotificationViewModel
 class NotificationFragment : Fragment() {
     private lateinit var binding:FragmentNotificationBinding
     private lateinit var viewModel:NotificationViewModel
+    private lateinit var adapter: NotificationAdapter
+    private lateinit var list:MutableList<NotificationModel>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,7 +35,10 @@ class NotificationFragment : Fragment() {
         binding.shimmer.startShimmer()
         viewModel = ViewModelProvider(requireActivity())[NotificationViewModel::class.java]
         val number = StoreManager(requireContext()).getString("number","")
-        val adapter = NotificationAdapter(requireContext())
+       list = mutableListOf()
+        list.addAll(getNotiList())
+         adapter = NotificationAdapter(requireContext(),list)
+        adapter.notifyDataSetChanged()
 
         viewModel.fetchData(number)
         binding.recyclerView.addItemDecoration(DividerItemDecoration(binding.recyclerView.context, DividerItemDecoration.VERTICAL))
@@ -39,19 +46,33 @@ class NotificationFragment : Fragment() {
         layoutManager.reverseLayout = true // Reverse the layout
         layoutManager.stackFromEnd = true // Display items from the end
         binding.recyclerView.layoutManager= layoutManager
-        binding.recyclerView.adapter = adapter
-        viewModel.liveData.observe(viewLifecycleOwner){newData->
-            adapter.updateData(newData)
-        }
-        viewModel.isLoading.observe(requireActivity()){isLoading->
-            if (!isLoading){
-                binding.shimmer.hideShimmer()
-                binding.recyclerView.visibility = View.VISIBLE
-                binding.shimmer.visibility = View.GONE
-            }
+        binding.recyclerView.adapter =  adapter
+        //adapter.updateData( list)
+//        viewModel.liveData.observe(viewLifecycleOwner){newData->
+//
+//            adapter.updateData(newData)
+//
+//        }
 
-        }
+
+
+
+
+//        viewModel.isLoading.observe(requireActivity()){isLoading->
+//            if (!isLoading){
+                binding.shimmer.hideShimmer()
+               binding.recyclerView.visibility = View.VISIBLE
+               binding.shimmer.visibility = View.GONE
+        //  }
+//
+//        }
         return binding.root
+    }
+
+    override fun onStart() {
+        super.onStart()
+       // adapter.list.clear()
+      //  adapter.updateData(list)
     }
 
 
