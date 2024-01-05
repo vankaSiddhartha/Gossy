@@ -16,36 +16,46 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/post_profile"
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/shemmer"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_margin="10dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/baseline_account_circle_24" />
+            app:layout_constraintTop_toTopOf="parent">
 
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/post_profile"
+                android:layout_width="50dp"
+                android:layout_gravity="center"
+                android:layout_height="50dp"
+                android:background="@color/grey"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/baseline_account_circle_24" />
+        </com.facebook.shimmer.ShimmerFrameLayout>
         <TextView
             android:id="@+id/user_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Name"
+            android:text="@string/LOADING"
             android:layout_marginStart="10dp"
             android:textStyle="bold"
             android:textSize="16sp"
             android:textColor="@color/black"
-            app:layout_constraintStart_toEndOf="@+id/post_profile"
-            app:layout_constraintTop_toTopOf="@+id/post_profile" />
+            app:layout_constraintStart_toEndOf="@+id/shemmer"
+            app:layout_constraintTop_toTopOf="@+id/shemmer" />
 
         <TextView
             android:id="@+id/time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="10sp"
             android:layout_marginTop="5dp"
-            android:text="5hrs"
+            android:text="@string/loading"
+            android:textSize="10sp"
             app:layout_constraintStart_toStartOf="@+id/user_name"
             app:layout_constraintTop_toBottomOf="@+id/user_name" />
 
@@ -61,8 +71,8 @@
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/post_profile"
-            app:layout_constraintTop_toBottomOf="@+id/post_profile" />
+            app:layout_constraintStart_toStartOf="@+id/shemmer"
+            app:layout_constraintTop_toBottomOf="@+id/shemmer" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView3"

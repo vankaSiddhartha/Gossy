@@ -13,6 +13,8 @@ import com.bhaskardamayanthi.gossy.MainActivity
 import com.bhaskardamayanthi.gossy.databinding.SettingItemBinding
 import com.bhaskardamayanthi.gossy.editAccountActivities.EditAccountActivity
 import com.bhaskardamayanthi.gossy.editAccountActivities.editFragments.ChangeProfileFragment
+import com.bhaskardamayanthi.gossy.fireMode.FireModeActivity
+import com.bhaskardamayanthi.gossy.fireMode.TestActivity
 import com.bhaskardamayanthi.gossy.webViewActivity.WebViewActivity
 
 
@@ -80,6 +82,10 @@ class SettingsAdapters(
             if (currentKey == "Gossy Profile"){
                 intent.putExtra("key","Gossy Profile")
                 context.startActivity(intent)
+            }
+            if (currentKey=="Fire Mode🔥"){
+                context.startActivity(Intent(context,FireModeActivity::class.java))
+                //context.startActivity(Intent(context,TestActivity::class.java))
             }
         }
 

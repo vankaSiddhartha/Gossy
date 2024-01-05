@@ -37,15 +37,26 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/profile"
+            <com.facebook.shimmer.ShimmerFrameLayout
+                android:id="@+id/shemmer"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_marginStart="10dp"
-                android:src="@drawable/baseline_account_circle_24"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/profile"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/baseline_account_circle_24"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </com.facebook.shimmer.ShimmerFrameLayout>
+
+
 
             <TextView
                 android:id="@+id/title_text"
@@ -56,11 +67,11 @@
                 android:textColor="@color/black"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@+id/profile"
+                app:layout_constraintBottom_toBottomOf="@+id/shemmer"
                 app:layout_constraintEnd_toStartOf="@+id/search_btn"
                 app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toEndOf="@+id/profile"
-                app:layout_constraintTop_toTopOf="@+id/profile" />
+                app:layout_constraintStart_toEndOf="@+id/shemmer"
+                app:layout_constraintTop_toTopOf="@+id/shemmer" />
 
             <ImageButton
                 android:id="@+id/search_btn"
@@ -71,7 +82,7 @@
                 app:layout_constraintBottom_toBottomOf="@+id/title_text"
                 app:layout_constraintEnd_toStartOf="@+id/cardView5"
                 app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toEndOf="@+id/profile"
+                app:layout_constraintStart_toEndOf="@+id/shemmer"
                 app:layout_constraintTop_toTopOf="@+id/title_text"
                 app:srcCompat="@drawable/baseline_search_24" />
 

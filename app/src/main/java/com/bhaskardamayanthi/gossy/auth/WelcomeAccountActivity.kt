@@ -61,8 +61,8 @@ class WelcomeAccountActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         val storeManager = StoreManager(this)
-        val isLog = storeManager.getString("number","0")
-        if (isLog !="0") {
+        val isLog = storeManager.getBoolean("login",false)
+        if (isLog) {
             startActivity(Intent(this, MainActivity::class.java))
             finishAffinity()
         }

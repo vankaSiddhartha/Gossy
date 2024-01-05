@@ -53,9 +53,9 @@ private lateinit var binding:FragmentNameBinding
                 }
             }
         })
-        binding.back.setOnClickListener {
-            startActivity(Intent(requireContext(), WelcomeAccountActivity::class.java))
-        }
+//        binding.back.setOnClickListener {
+//            startActivity(Intent(requireContext(), WelcomeAccountActivity::class.java))
+//        }
 
         return binding.root
 

@@ -19,6 +19,7 @@ class NotificationViewModel: ViewModel() {
 
 
     fun fetchData(userId:String){
+
             getNotificationData(userId)
     }
 //    fun updateZero(){
@@ -35,6 +36,7 @@ class NotificationViewModel: ViewModel() {
            val data = mutableListOf<NotificationModel>()
            override fun onDataChange(snapshot: DataSnapshot) {
                var count = 0L
+               liveData.value?.clear()
                for (childSnapshot in snapshot.children){
                    val getData = childSnapshot.getValue(NotificationModel::class.java)
                    if (getData != null) {

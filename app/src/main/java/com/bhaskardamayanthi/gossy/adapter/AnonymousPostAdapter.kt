@@ -3,19 +3,16 @@ package com.bhaskardamayanthi.gossy.adapter
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
 import android.icu.text.SimpleDateFormat
 import android.os.Build
 import android.os.Bundle
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.os.bundleOf
-import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import com.bhaskardamayanthi.gossy.R
@@ -26,31 +23,26 @@ import com.bhaskardamayanthi.gossy.localStore.StoreManager
 import com.bhaskardamayanthi.gossy.managers.FirebaseDataManager
 import com.bhaskardamayanthi.gossy.managers.FragmentIntentManager.intentFragment
 import com.bhaskardamayanthi.gossy.managers.GETfromFirebaseManager
-import com.bhaskardamayanthi.gossy.managers.TokenManager
 import com.bhaskardamayanthi.gossy.model.PostModel
 import com.bhaskardamayanthi.gossy.notificationSee.CommentActivity
 import com.bhaskardamayanthi.gossy.notificationSee.SeeLikePostActivity
 import com.bhaskardamayanthi.gossy.viewModel.ShareDataInFragmentViewModel
 import com.bumptech.glide.Glide
-import com.google.android.gms.tasks.Task
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import java.lang.Exception
 import java.util.Calendar
 import java.util.Locale
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 
 class AnonymousPostAdapter(val context:Context,val shareDataInFragmentViewModel: ShareDataInFragmentViewModel,val isNotification:Boolean,private val lifecycleOwner: LifecycleOwner):RecyclerView.Adapter<AnonymousPostAdapter.ViewHolder>() {
     private var list: List<PostModel> = emptyList()
@@ -108,6 +100,7 @@ class AnonymousPostAdapter(val context:Context,val shareDataInFragmentViewModel:
                 imgList[position] = fakeImg
                 name = fakeName
                 Glide.with(context).load(fakeImg).into(holder.binding.postProfile)
+                loadImageWithProgressBar(fakeImg,holder.binding)
             } catch (e: Exception) {
                 Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
             }
@@ -386,5 +379,36 @@ class AnonymousPostAdapter(val context:Context,val shareDataInFragmentViewModel:
 
         Pair(fakeName, fakeImg)
     }
+    fun loadImageWithProgressBar(urlImage: String, binding: PostBinding){
+        // Show progress bar
 
+        binding.shemmer.startShimmer()
+        Glide.with(context)
+            .load(urlImage)
+            .listener(object : RequestListener<Drawable> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Drawable>,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    binding.shemmer.hideShimmer()
+                    return false
+                }
+
+                override fun onResourceReady(
+                    resource: Drawable,
+                    model: Any,
+                    target: Target<Drawable>?,
+                    dataSource: DataSource,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    binding.shemmer.hideShimmer()
+                    binding.postProfile.background = ColorDrawable(Color.WHITE)
+                    return false
+                }
+
+            })
+            .into(binding.postProfile)
+    }
 }

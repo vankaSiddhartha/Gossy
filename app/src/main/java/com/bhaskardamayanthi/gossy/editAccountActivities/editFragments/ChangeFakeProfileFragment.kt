@@ -1,6 +1,9 @@
 package com.bhaskardamayanthi.gossy.editAccountActivities.editFragments
 
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -16,6 +19,10 @@ import com.bhaskardamayanthi.gossy.databinding.FragmentChangeFakeProfileBinding
 import com.bhaskardamayanthi.gossy.loading.Loading
 import com.bhaskardamayanthi.gossy.localStore.StoreManager
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlin.random.Random
@@ -34,10 +41,12 @@ private lateinit var storeManager:StoreManager
         }
 
         binding = FragmentChangeFakeProfileBinding.inflate(layoutInflater,container,false)
+        binding.shemmer.startShimmer()
         storeManager = StoreManager(requireContext())
         val img = storeManager.getString("fakeImg","")
         saveFakeProfile = img
-        Glide.with(requireContext()).load(saveFakeProfile).load(img).into(binding.circleImageView)
+    //    Glide.with(requireContext()).load(saveFakeProfile).load(img).into(binding.circleImageView)
+        loadImageWithProgressBar(img)
         val aiImages  = AiImage()
         val sex = storeManager.getString("sex","0")
         val phone = storeManager.getString("number","")
@@ -55,21 +64,24 @@ private lateinit var storeManager:StoreManager
 
          val generatedMaleImageId = Random.nextInt(aiImage.maleImg.size)
          val maleImg =  aiImage.maleImg.get(generatedMaleImageId)
-         Glide.with(requireContext()).load(maleImg).into(binding.circleImageView)
+         loadImageWithProgressBar(maleImg)
+      //   Glide.with(requireContext()).load(maleImg).into(binding.circleImageView)
          saveFakeProfile = maleImg
 
 
      }else if(sex.equals("female")){
          val generatedFemaleImageId = Random.nextInt(aiImage.femaleImg.size)
          val femaleImg = aiImage.femaleImg.get(generatedFemaleImageId)
-         Glide.with(requireContext()).load(femaleImg).into(binding.circleImageView)
+         loadImageWithProgressBar(femaleImg)
+ //        Glide.with(requireContext()).load(femaleImg).into(binding.circleImageView)
          saveFakeProfile = femaleImg
 
 
      } else{
          val generatedFemaleImageId = Random.nextInt(aiImage.femaleImg.size)
          val femaleImg = aiImage.femaleImg[generatedFemaleImageId]
-         Glide.with(requireContext()).load(femaleImg).into(binding.circleImageView)
+         loadImageWithProgressBar(femaleImg)
+       //  Glide.with(requireContext()).load(femaleImg).into(binding.circleImageView)
          saveFakeProfile = femaleImg
      }
  }
@@ -87,5 +99,41 @@ private lateinit var storeManager:StoreManager
         val intent = Intent(requireContext(), MainActivity::class.java)
         startActivity(intent)
 
+    }
+    fun loadImageWithProgressBar(urlImage: String ){
+        // Show progress bar
+
+        binding.shemmer.startShimmer()
+        binding.loading.visibility = View.VISIBLE
+        Glide.with(requireContext())
+            .load(urlImage)
+            .listener(object : RequestListener<Drawable> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Drawable>,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    binding.shemmer.hideShimmer()
+                    return false
+                }
+
+                override fun onResourceReady(
+                    resource: Drawable,
+                    model: Any,
+                    target: Target<Drawable>?,
+                    dataSource: DataSource,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    binding.shemmer.background = ColorDrawable(Color.TRANSPARENT)
+                    binding.shemmer.hideShimmer()
+                    binding.loading.visibility = View.INVISIBLE
+
+
+                    return false
+                }
+
+            })
+            .into(binding.circleImageView)
     }
 }

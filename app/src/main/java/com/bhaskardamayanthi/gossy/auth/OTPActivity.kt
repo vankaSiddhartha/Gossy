@@ -43,20 +43,20 @@ class  OTPActivity : AppCompatActivity(),OTPTimerManager.OnTimerTickListener{
                     .setContentText(it.toString()).show()
             }
         }
-        binding.upload.setOnClickListener {
-            if (storeManager.getBoolean("isLogin",false)) {
-                val token = TokenManager(this)
-                token.saveTokenLocally()
-
-                val intent = Intent(this@OTPActivity, FetchDataLoadingActivity::class.java)
-                startActivity(intent)
-            }else {
-                val token = TokenManager(this)
-                token.saveTokenLocally()
-                val intent = Intent(this@OTPActivity, UserDataActivity::class.java)
-                startActivity(intent)
-            }
-        }
+//        binding.upload.setOnClickListener {
+//            if (storeManager.getBoolean("isLogin",false)) {
+//                val token = TokenManager(this)
+//                token.saveTokenLocally()
+//
+//                val intent = Intent(this@OTPActivity, FetchDataLoadingActivity::class.java)
+//                startActivity(intent)
+//            }else {
+//                val token = TokenManager(this)
+//                token.saveTokenLocally()
+//                val intent = Intent(this@OTPActivity, UserDataActivity::class.java)
+//                startActivity(intent)
+//            }
+//        }
 
 
     }

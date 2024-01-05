@@ -46,9 +46,19 @@ private lateinit var list:List<CollageModel>
         val adapter = ChooseCollageAdapter(requireContext(),emptyArrayList)
         recyclerView.adapter = adapter
         // Observe the loading status
-        chooseCollageviewModel.loadingStatus.observe(requireActivity()) { isLoading ->
-            if (isLoading) showAlertDialogForLoading(requireActivity()) else dismissDialogForLoading()
-        }
+       /// chooseCollageviewModel.loadingStatus.observe(requireActivity()) { isLoading ->
+//            if (isLoading) showAlertDialogForLoading(requireActivity()) else dismissDialogForLoading()
+            if (isAdded) {
+                chooseCollageviewModel.loadingStatus.observe(viewLifecycleOwner) { isLoading ->
+                    if (isLoading) {
+                        showAlertDialogForLoading(requireActivity())
+                    } else {
+                        dismissDialogForLoading()
+                    }
+                }
+            }
+
+    //    }
 
         // Observe the collageData LiveData and update the adapter
         chooseCollageviewModel.collageData.observe(requireActivity()) { collages ->

@@ -50,6 +50,15 @@
         android:theme="@style/Theme.Gossy"
         tools:targetApi="31">
         <activity
+            android:name=".fireMode.VankaPaymentGateway"
+            android:exported="false" />
+        <activity
+            android:name=".fireMode.TestActivity"
+            android:exported="false" />
+        <activity
+            android:name=".fireMode.FireModeActivity"
+            android:exported="false" />
+        <activity
             android:name=".editAccountActivities.EditAccountActivity"
             android:exported="false" />
         <activity

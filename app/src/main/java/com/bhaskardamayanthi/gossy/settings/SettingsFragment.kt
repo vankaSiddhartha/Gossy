@@ -22,7 +22,8 @@ private lateinit var binding:FragmentSettingsBinding
     ): View {
         binding = FragmentSettingsBinding.inflate(layoutInflater,container,false)
         val storeManager = StoreManager(requireContext())
-        val  name = storeManager.getString("name","")
+        val  name1 = storeManager.getString("name1","")
+        val name2 =  storeManager.getString("name2","")
         val fakeName = storeManager.getString("fakeName","")
         val fakeProfile = storeManager.getString("fakeImg","")
         val profile = storeManager.getString("profile","")
@@ -31,7 +32,7 @@ private lateinit var binding:FragmentSettingsBinding
             "Premium Mode" to "",
             "Fire Mode🔥" to "FireMode",
             "My Account" to "",
-            "Name" to name,
+            "Name" to "$name1 $name2",
             "Gossy Name" to fakeName,
             "Profile" to profile,
             "Gossy Profile" to fakeProfile,

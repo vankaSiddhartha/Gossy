@@ -17,28 +17,39 @@
         android:text="@string/name"
         android:textColor="@color/black"
         android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="@+id/ai_fake_profle"
-        app:layout_constraintStart_toStartOf="@+id/ai_fake_profle"
-        app:layout_constraintTop_toBottomOf="@+id/ai_fake_profle" />
+        app:layout_constraintEnd_toEndOf="@+id/shimmerFrameLayout"
+        app:layout_constraintStart_toStartOf="@+id/shimmerFrameLayout"
+        app:layout_constraintTop_toBottomOf="@+id/shimmerFrameLayout" />
 
-    <ImageView
-        android:id="@+id/ai_fake_profle"
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/shimmerFrameLayout"
         android:layout_width="200dp"
+        android:background="@color/grey"
         android:layout_height="200dp"
-        android:layout_marginTop="30dp"
-        android:src="@drawable/baseline_account_circle_24"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.29000002" />
+        app:layout_constraintTop_toBottomOf="@+id/textView">
+
+        <ImageView
+            android:id="@+id/ai_fake_profle"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+
+            android:src="@drawable/baseline_account_circle_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.29000002" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
 
 
     <ImageButton
         android:id="@+id/back"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:background="@color/white"
+        android:background="@android:color/transparent"
         android:contentDescription="@string/back"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -56,7 +67,7 @@
         android:text="Welcome to Vankaverse, a universe with no restrictions. It's a new life with a new name and a new look."
         android:textColor="@color/black"
         android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@+id/ai_fake_profle"
+        app:layout_constraintBottom_toTopOf="@+id/shimmerFrameLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/back"
@@ -66,20 +77,21 @@
         android:id="@+id/genrateNew"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:text="Generate new"
         android:textColor="@color/btnBlue"
         android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="@+id/ai_fake_profle"
-        app:layout_constraintStart_toStartOf="@+id/ai_fake_profle"
-        app:layout_constraintTop_toBottomOf="@+id/fakename" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/shimmerFrameLayout"
+        app:layout_constraintStart_toStartOf="@+id/shimmerFrameLayout"
+        app:layout_constraintTop_toBottomOf="@+id/fakename"
+        app:layout_constraintVertical_bias="0.0" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/upload"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="10dp"
         android:layout_marginEnd="20dp"
         app:cardBackgroundColor="@color/btnBlue"
         app:cardCornerRadius="40dp"
@@ -87,8 +99,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/genrateNew"
-        app:layout_constraintVertical_bias="0.26">
+        app:layout_constraintTop_toBottomOf="@+id/genrateNew">
 
         <TextView
             android:id="@+id/textView2"

@@ -4,6 +4,8 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -20,10 +22,16 @@ import com.bhaskardamayanthi.gossy.MainActivity
 import com.bhaskardamayanthi.gossy.databinding.FragmentChangeProfileBinding
 import com.bhaskardamayanthi.gossy.loading.Loading
 import com.bhaskardamayanthi.gossy.localStore.StoreManager
+import com.bhaskardamayanthi.gossy.managers.NameToProfileManager
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.storageMetadata
 import java.util.UUID
 
 
@@ -77,7 +85,13 @@ private lateinit var binding:FragmentChangeProfileBinding
           storeManager = StoreManager(requireContext())
          val profile = storeManager.getString("profile","")
          myProfile = profile
-         Glide.with(requireActivity()).load(profile).into(binding.circleImageView)
+         val name = storeManager.getString("name","")
+         if (profile.isEmpty()){
+             val bitmap = NameToProfileManager.textAsBitmap( name,20f, Color.BLACK, Color.WHITE)
+             binding.circleImageView.setImageBitmap(bitmap)
+         }else{
+             Glide.with(requireActivity()).load(profile).into(binding.circleImageView)
+         }
          binding.goGalleryBtn.setOnClickListener {
              readPermission()
          }
@@ -170,4 +184,6 @@ private lateinit var binding:FragmentChangeProfileBinding
         startActivity(intent)
 
     }
+
+
 }

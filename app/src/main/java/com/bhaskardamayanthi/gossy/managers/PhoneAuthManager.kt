@@ -2,8 +2,11 @@ package com.bhaskardamayanthi.gossy.managers
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.widget.Toast
 import cn.pedant.SweetAlert.SweetAlertDialog
+import com.bhaskardamayanthi.gossy.auth.FetchDataLoadingActivity
+import com.bhaskardamayanthi.gossy.auth.UserDataActivity
 import com.bhaskardamayanthi.gossy.loading.Loading.dismissDialogForLoading
 import com.bhaskardamayanthi.gossy.loading.Loading.showAlertDialogForLoading
 import com.bhaskardamayanthi.gossy.localStore.StoreManager
@@ -32,7 +35,7 @@ class PhoneAuthManager(private val context: Context, private val otpManager: OTP
             .setCallbacks(object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
                 override fun onVerificationCompleted(phoneAuthCredential: PhoneAuthCredential) {
                     // Automatically handle verification if the device is able to receive SMS
-                    signInWithPhoneAuthCredential(phoneAuthCredential,phoneNumber)
+                    signInWithPhoneAuthCredential(phoneAuthCredential,phoneNumber,context)
 
                 }
 
@@ -60,10 +63,10 @@ class PhoneAuthManager(private val context: Context, private val otpManager: OTP
 
     fun verifyOTP(otp: String,phoneNumber: String) {
         val credential = PhoneAuthProvider.getCredential(verificationId, otp)
-        signInWithPhoneAuthCredential(credential,phoneNumber)
+        signInWithPhoneAuthCredential(credential,phoneNumber,context)
     }
 
-    private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential,phoneNumber: String) {
+    private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential,phoneNumber: String,context: Context) {
         val storeManager = StoreManager(context)
         mAuth.signInWithCredential(credential)
             .addOnCompleteListener(context as Activity) { task ->
@@ -72,7 +75,20 @@ class PhoneAuthManager(private val context: Context, private val otpManager: OTP
                    // Toast.makeText(context, "Authentication Successful", Toast.LENGTH_SHORT).show()
                     storeManager.saveString("number",phoneNumber.toString())
                     SweetAlertDialog(context, SweetAlertDialog.SUCCESS_TYPE).setTitleText("Great")
-                        .setContentText( "Authentication Successful").show()
+                        .setContentText( "Authentication Successful").setConfirmClickListener {
+                            if (storeManager.getBoolean("isLogin",false)) {
+                                val token = TokenManager(context)
+                                token.saveTokenLocally()
+
+                                val intent = Intent(context, FetchDataLoadingActivity::class.java)
+                                context.startActivity(intent)
+                            }else {
+                                val token = TokenManager(context)
+                                token.saveTokenLocally()
+                                val intent = Intent(context, UserDataActivity::class.java)
+                                context.startActivity(intent)
+                            }
+                    }.show()
                 } else {
                     // If sign in fails, display a message to the user.
                     SweetAlertDialog(context, SweetAlertDialog.ERROR_TYPE).setTitleText("Oops...")

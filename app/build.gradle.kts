@@ -68,4 +68,8 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.6.0")
     //com.facebook.shimmer:shimmer:0.5.0
     implementation("com.facebook.shimmer:shimmer:0.5.0")
+    implementation("dev.shreyaspatil.EasyUpiPayment:EasyUpiPayment:3.0.3")
+    implementation ("com.google.zxing:core:3.4.1")
+    implementation ("com.journeyapps:zxing-android-embedded:4.2.0")
+
 }

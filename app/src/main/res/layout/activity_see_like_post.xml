@@ -16,7 +16,7 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:contentDescription="@string/back"
-            android:background="@color/white"
+            android:background="@android:color/transparent"
             android:layout_margin="10dp"
             android:src="@drawable/baseline_arrow_back_ios_new_24"
             app:layout_constraintStart_toStartOf="parent"

@@ -94,7 +94,7 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:contentDescription="@string/up"
-        android:background="@color/white"
+        android:background="@android:color/transparent"
         android:src="@drawable/baseline_keyboard_arrow_up_24"
         app:layout_constraintBottom_toTopOf="@+id/searchView"
         app:layout_constraintEnd_toEndOf="parent"

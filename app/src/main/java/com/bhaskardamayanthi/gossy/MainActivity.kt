@@ -1,6 +1,7 @@
 package com.bhaskardamayanthi.gossy
 
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -24,6 +25,10 @@ import com.bhaskardamayanthi.gossy.trending.TrendingFragment
 import com.bhaskardamayanthi.gossy.uploadPost.UploadPostFragment
 import com.bhaskardamayanthi.gossy.viewModel.NotificationViewModel
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 
 class MainActivity : AppCompatActivity() {
    private lateinit var binding:ActivityMainBinding
@@ -90,7 +95,8 @@ class MainActivity : AppCompatActivity() {
             intentFragment(R.id.frag,NotificationFragment(),this,"NotificationFragment")
         }
         val fakeImg = storeManager.getString("fakeImg","")
-        Glide.with(this).load(fakeImg).into(binding.profile)
+      //  Glide.with(this).load(fakeImg).into(binding.profile)
+        loadImageWithProgressBar(fakeImg)
         binding.bottomNavigationView.setOnItemSelectedListener{menuItem->
             when (menuItem.itemId) {
                R.id.home->{
@@ -126,7 +132,42 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        val storeManager = StoreManager(this)
+         storeManager.saveBoolean("login",true)
+    }
 
+    fun loadImageWithProgressBar(urlImage: String ){
+        // Show progress bar
+        //     binding.shimmerFrameLayout.startShimmer()
+        binding.shemmer.startShimmer()
+        Glide.with(this)
+            .load(urlImage)
+            .listener(object : RequestListener<Drawable> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Drawable>,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    binding.shemmer.hideShimmer()
+                    return false
+                }
 
+                override fun onResourceReady(
+                    resource: Drawable,
+                    model: Any,
+                    target: Target<Drawable>?,
+                    dataSource: DataSource,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    binding.shemmer.hideShimmer()
+                    return false
+                }
+
+            })
+            .into(binding.profile )
+    }
 
 }
