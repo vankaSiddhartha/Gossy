@@ -30,16 +30,6 @@ import java.util.Date
 import java.util.Locale
 import java.util.UUID
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [UploadPostFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class UploadPostFragment : Fragment() {
 private lateinit var binding:FragmentUploadPostBinding
 private lateinit var postCheck:PostCheckViewModel
@@ -58,6 +48,7 @@ private var list  = arrayListOf<String>("")
         val gender = storeManager.getString("sex","")
         val number = storeManager.getString("number","0")
         val token = TokenManager(requireContext()).getSavedToken()
+        val college = StoreManager(requireContext()).getString("college","Bar")
         var alertText = ""
         if (gender=="female"){
             alertText="Bhutulu vodhu papa"
@@ -72,14 +63,15 @@ private var list  = arrayListOf<String>("")
 
         binding.postBtn.setOnClickListener {
 
-            notificationToAll.sendNotificationToAll("$fakeName new message",binding.postEt.text.toString(),"/topics/myTopic2")
+      //      notificationToAll.sendNotificationToAll("$fakeName new message",binding.postEt.text.toString(),"/topics/myTopic2")
             if (binding.postEt.text.toString().isNotEmpty()){
                 if (checkText(binding.postEt.text.toString(),list)){
                     SweetAlertDialog(context, SweetAlertDialog.ERROR_TYPE).setTitleText(alertText).setContentText("Nuvu butulu matladetey bogovu").show()
                     return@setOnClickListener
                 }
                 val postId = UUID.randomUUID().toString()
-                val path  = "post/$postId"
+
+                val path  = "post/$college/$postId"
                 val data = PostModel(binding.postEt.text.toString(),0,0,getCurrentDateTime(),postId,number,token,path)
                 firebaseDataManager.uploadPostToDatabase(number,data,requireContext())
             }else{

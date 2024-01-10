@@ -24,13 +24,16 @@ class WebViewActivity : AppCompatActivity() {
         val webView: WebView = binding.web
         val link = intent.getStringExtra("link")
         val  headText = intent.getStringExtra("headText")
+        binding.back.setOnClickListener {
+            finish()
+        }
 
         // Enable JavaScript
         webView.settings.javaScriptEnabled = true
 
         // Enable caching
 
-        webView.settings.cacheMode = WebSettings.LOAD_CACHE_ELSE_NETWORK
+      //  webView.settings.cacheMode = WebSettings.LOAD_CACHE_ELSE_NETWORK
 
         // Optimize WebView load
         webView.settings.loadWithOverviewMode = true

@@ -10,8 +10,8 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
-class AnonymousPostViewModel():ViewModel( ) {
-    private val database = Firebase.database("https://gossy-fbbcf-default-rtdb.asia-southeast1.firebasedatabase.app/").reference.child("post")
+class AnonymousPostViewModel:ViewModel( ) {
+    private val database = Firebase.database("https://gossy-fbbcf-default-rtdb.asia-southeast1.firebasedatabase.app/").reference.child("post").child("ANITS")
     private val reference = database.orderByChild("time")
 
     val dataList = MutableLiveData<List<PostModel>>()

@@ -76,6 +76,7 @@ class SeeLikePostActivity : AppCompatActivity(){
                 binding.postText.text = storedData?.postText.toString()
                 binding.commentsNumber.text = storedData?.comment.toString()
                 geTfromFirebaseManager.getLikeCount(
+                    this,
                     number,
                     storedData?.id.toString(),
                     type

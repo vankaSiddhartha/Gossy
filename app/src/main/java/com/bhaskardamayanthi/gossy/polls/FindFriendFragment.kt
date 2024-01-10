@@ -25,6 +25,13 @@ import com.bhaskardamayanthi.gossy.model.CollageModel
 import com.bhaskardamayanthi.gossy.model.Contact
 import com.bhaskardamayanthi.gossy.model.UserModel
 import com.bhaskardamayanthi.gossy.viewModel.FindFragmentViewModel
+import com.bhaskardamayanthi.gossy.viewModel.FriendRecommendationViewModel
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.Query
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -34,25 +41,31 @@ import kotlinx.coroutines.withContext
 class FindFriendFragment : Fragment() {
     private lateinit var binding: FragmentFindFriendBinding
     private lateinit var viewModel: FindFragmentViewModel
+    private lateinit var friendsViewModel: FriendRecommendationViewModel
+    private lateinit var adapter:FindFriendAdapter
     private val REQUEST_CONTACTS_PERMISSION = 123
     private lateinit var  list:List<UserModel>
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
+        friendsViewModel = ViewModelProvider(requireActivity())[FriendRecommendationViewModel::class.java]
         binding = FragmentFindFriendBinding.inflate(layoutInflater, container, false)
         binding.shimmer.startShimmer()
         viewModel = ViewModelProvider(requireActivity())[FindFragmentViewModel::class.java]
-        val adapter = FindFriendAdapter(requireContext())
+       adapter = FindFriendAdapter(requireContext())
+        binding.findFriendRv.layoutManager = LinearLayoutManager(requireContext())
         binding.findFriendRv.addItemDecoration(
             DividerItemDecoration(
                 binding.findFriendRv.context,
                 DividerItemDecoration.VERTICAL
             )
         )
-        binding.findFriendRv.layoutManager = LinearLayoutManager(requireContext())
-        binding.findFriendRv.adapter = adapter
+
+        friendsViewModel.friendRecommendations.observe(viewLifecycleOwner){data->
+            adapter.getFriends(data)
+
+        }
 
         viewModel.dataList.observe(requireActivity()) { data ->
 
@@ -82,59 +95,38 @@ class FindFriendFragment : Fragment() {
         } else {
             fetchContacts(requireContext()){contacts ->
                 adapter.updateContacts(contacts)
-//                Toast.makeText(requireContext(), contacts[0].name, Toast.LENGTH_SHORT).show()
-            } // Pass the context here
+                val contactsWithoutDuplicates = contacts.toSet().toList()
+                friendsViewModel.fetch(contactsWithoutDuplicates)
+
+
+       }
 
         }
-        binding.searchView.setOnQueryTextListener(object  : SearchView.OnQueryTextListener{
+
+        binding.findFriendRv.adapter = adapter
+        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-
                 return false
-
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (newText != null) {
-                    val filteredList = ArrayList<UserModel>()
-                    for (i in list) {
-                        if (i.name!!.contains(newText,ignoreCase = true)) {
-                            filteredList.add(i)
-                        }
-                    }
+                    searchUsersByName(newText)
+                }else{
+                    friendsViewModel.friendRecommendations.observe(viewLifecycleOwner){data->
+                        adapter.getFriends(data)
 
-                    if (filteredList.isNotEmpty()) {
-                        adapter.updateData(filteredList)
                     }
                 }
-
                 return true
             }
-
-
         })
+
 
 
         return binding.root
     }
 
-    private fun checkPermmissionAndFetchNumbers() {
-        if (ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.READ_CONTACTS
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                requireActivity(),
-                arrayOf(Manifest.permission.READ_CONTACTS),
-                REQUEST_CONTACTS_PERMISSION
-            )
-        } else {
-            fetchContacts(requireContext()){contacts ->
-
-            } // Pass the context here
-
-        }
-    }
 
     private fun fetchContacts(context: Context, contactsCallback: (List<Contact>) -> Unit) {
         val coroutineScope = CoroutineScope(Dispatchers.Main)
@@ -142,6 +134,28 @@ class FindFriendFragment : Fragment() {
             val contacts = getContacts(context)
             contactsCallback(contacts)
         }
+    }
+    fun searchUsersByName(name: String) {
+
+        val query = Firebase.database("https://gossy-fbbcf-default-rtdb.asia-southeast1.firebasedatabase.app/").reference.child("users").orderByChild("name").startAt(name).endAt(name + "\uf8ff").limitToLast(10)
+        query.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val filteredList = ArrayList<UserModel>()
+                for (userSnapshot in dataSnapshot.children) {
+                    val user = userSnapshot.getValue(UserModel::class.java)
+                    user?.let { filteredList.add(it) }
+                }
+
+                if (filteredList.isNotEmpty()) {
+                    adapter.getFriends(filteredList)
+                    binding.findFriendRv.adapter = adapter
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Handle errors if needed
+            }
+        })
     }
 
     private suspend fun getContacts(context: Context): List<Contact> {

@@ -58,14 +58,14 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this)[NotificationViewModel::class.java]
         viewModel.fetchData(number)
         supportActionBar?.hide()
-//        val fargintent = intent.getStringExtra("key")
-//        if (fargintent=="noti"){
-//            intentFragment(R.id.frag,NotificationFragment(),this,"NotificationFragment")
-//        }
         viewModel.liveData.observe(this){newData->
             updateNotiList(newData)
-           //
 
+
+        }
+        binding.profile.setOnClickListener{
+            binding.titleText.text= "Settings"
+            intentFragment(R.id.frag,SettingsFragment(),this,"SettingFragment")
         }
         viewModel.countValue.observe(this){notificationCount->
             if (notificationCount>0){
@@ -77,10 +77,6 @@ class MainActivity : AppCompatActivity() {
             }
 
         }
-        //val tokenManager = TokenManager(this)
-
-
-      //  startActivity(Intent(this,SeeThePollActivity::class.java))
 
 
 
@@ -95,7 +91,6 @@ class MainActivity : AppCompatActivity() {
             intentFragment(R.id.frag,NotificationFragment(),this,"NotificationFragment")
         }
         val fakeImg = storeManager.getString("fakeImg","")
-      //  Glide.with(this).load(fakeImg).into(binding.profile)
         loadImageWithProgressBar(fakeImg)
         binding.bottomNavigationView.setOnItemSelectedListener{menuItem->
             when (menuItem.itemId) {

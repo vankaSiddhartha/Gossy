@@ -51,6 +51,7 @@ private lateinit var viewModel:TrendingViewModel
             }
 
         }
+        viewModel.fetch(requireActivity())
         return binding.root
     }
 

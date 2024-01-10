@@ -40,12 +40,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
-import java.lang.Exception
 import java.util.Calendar
 import java.util.Locale
+import kotlin.Exception
 
 class AnonymousPostAdapter(val context:Context,val shareDataInFragmentViewModel: ShareDataInFragmentViewModel,val isNotification:Boolean,private val lifecycleOwner: LifecycleOwner):RecyclerView.Adapter<AnonymousPostAdapter.ViewHolder>() {
-    private var list: List<PostModel> = emptyList()
+    private var list  : List<PostModel> = emptyList()
     private var imgList = HashMap<Int,String>()
     private var type: String = ""
 
@@ -111,8 +111,13 @@ class AnonymousPostAdapter(val context:Context,val shareDataInFragmentViewModel:
 
 // Set the text with color-tagged spannable string to the TextView
         holder.binding.postText.text = list[position].postText
-        holder.binding.time.text = getRemainingTime(list[position].time.toString())
-        geTfromFirebaseManager.getLikeCount(number,list[position].id.toString(),type) { count,isLiked ->
+        try{
+            holder.binding.time.text = getRemainingTime(list[position].time.toString())
+        }catch (e:Exception){
+
+        }
+
+        geTfromFirebaseManager.getLikeCount(context,number,list[position].id.toString(),type) { count,isLiked ->
             // Do something with the count, for example, print it
             holder.binding.likeText.text =count.toString()
             holder.binding.likeBtn.isChecked = isLiked
@@ -360,7 +365,7 @@ class AnonymousPostAdapter(val context:Context,val shareDataInFragmentViewModel:
     }
 
 
-    suspend fun getFakeImg(database: DatabaseReference): String = withContext(Dispatchers.IO) {
+    suspend fun getFakeImg(database: DatabaseReference): String =  withContext(Dispatchers.IO) {
         database.child("fakeImg").get().await().value.toString()
     }
 

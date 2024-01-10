@@ -11,6 +11,7 @@ import com.bhaskardamayanthi.gossy.MainActivity
 import com.bhaskardamayanthi.gossy.auth.PermissionActivity
 import com.bhaskardamayanthi.gossy.loading.Loading.dismissDialogForLoading
 import com.bhaskardamayanthi.gossy.loading.Loading.showAlertDialogForLoading
+import com.bhaskardamayanthi.gossy.localStore.StoreManager
 import com.bhaskardamayanthi.gossy.model.FriendsModel
 import com.bhaskardamayanthi.gossy.model.NotificationModel
 import com.bhaskardamayanthi.gossy.model.PostModel
@@ -65,19 +66,21 @@ class FirebaseDataManager {
 
     fun uploadPostToDatabase(userId: String, post: PostModel, context: Context) {
         showAlertDialogForLoading(context)
+        val storeManager = StoreManager(context)
+        val college = storeManager.getString("college","Bro")
         // Assuming you have a "users" node in your database
-        val usersRef = DATABASE.child("post")
+        val usersRef = DATABASE.child("post").child("ANITS")
 
         // Set the user object under the user's ID node
         usersRef.child(post.id!!).setValue(post)
-            .addOnSuccessListener {
+            .addOnSuccessListener  {
                 dismissDialogForLoading()
                 SweetAlertDialog(
                     context,
                     SweetAlertDialog.SUCCESS_TYPE
                 ).setTitleText("Good job!").setContentText("successful").setConfirmClickListener { sDialog -> // Showing simple toast message to user
                     sDialog.dismissWithAnimation()
-                    //  startActivity(Intent(this, MainActivity::class.java))
+
                 }.setConfirmClickListener { sDialog ->
                     sDialog.dismissWithAnimation()
 //                    context.startActivity(Intent(context, LoginActivity::class.java))

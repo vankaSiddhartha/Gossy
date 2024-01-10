@@ -6,7 +6,7 @@ import com.bhaskardamayanthi.gossy.localStore.StoreManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.messaging.FirebaseMessaging
 
-class App:Application() {
+class  App:Application() {
     override fun onCreate() {
         super.onCreate()
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)

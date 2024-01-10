@@ -39,10 +39,10 @@ class GETfromFirebaseManager {
 
         })
     }
-    fun getLikeCount(number:String,id: String, type:String,callback: (Long,Boolean) -> Unit) {
+    fun getLikeCount(context:Context,number:String,id: String, type:String,callback: (Long,Boolean) -> Unit) {
         val DATABASE = Firebase.database("https://gossy-fbbcf-default-rtdb.asia-southeast1.firebasedatabase.app/").reference
         val likesRef = DATABASE.child("likes").child(id)
-
+        val college = StoreManager(context).getString("college","Bro")
         likesRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val count = snapshot.childrenCount
@@ -54,7 +54,7 @@ class GETfromFirebaseManager {
                 }
                 if (type.equals("post")) {
                     if (id.isNotEmpty())
-                        DATABASE.child("post").child(id).child("likes").setValue(count)
+                        DATABASE.child("post").child(college).child(id).child("likes").setValue(count)
                 }
             }
 

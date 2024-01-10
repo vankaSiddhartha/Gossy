@@ -22,12 +22,19 @@ import androidx.core.content.ContextCompat
 import com.bhaskardamayanthi.gossy.MainActivity
 import com.bhaskardamayanthi.gossy.R
 import com.bhaskardamayanthi.gossy.databinding.ActivitySeetThePollBinding
+import com.bhaskardamayanthi.gossy.fireMode.FireModeActivity
 import com.bhaskardamayanthi.gossy.localStore.StoreManager
+import com.bhaskardamayanthi.gossy.model.PremiumModel
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-
-
+import java.text.SimpleDateFormat
+import java.util.Date
 
 
 class SeeThePollActivity : AppCompatActivity() {
@@ -41,12 +48,15 @@ class SeeThePollActivity : AppCompatActivity() {
         binding = ActivitySeetThePollBinding.inflate(layoutInflater)
         supportActionBar?.hide()
         setContentView(binding.root)
+
         binding.back.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
             intent.putExtra("key","noti")
             startActivity(intent)
         }
+        val from = intent.getStringExtra("from")
         val storeManager = StoreManager(this)
+        val number = storeManager.getString("number","")
         binding.cardView6.setOnClickListener {
          permission()
         }
@@ -83,6 +93,16 @@ class SeeThePollActivity : AppCompatActivity() {
         binding.instagram.setOnClickListener {
             takeScreenshotAndShareToInstagram()
         }
+        binding.firemode.setOnClickListener {
+            if (from != null) {
+                getPaymentStatus(number,from)
+            }else{
+                val intent = Intent(this, MainActivity::class.java)
+                intent.putExtra("key","noti")
+                startActivity(intent)
+            }
+        }
+
 
     }
 
@@ -281,5 +301,78 @@ private fun getImageUri(bitmap: Bitmap): Uri? {
         val uri = Uri.fromParts("package", context.packageName, null)
         intent.data = uri
         startActivityForResult(intent, 10001)
+    }
+    private fun getUser(phone:String){
+        val ref =Firebase.database("https://gossy-fbbcf-default-rtdb.asia-southeast1.firebasedatabase.app/").reference.child("users").child(phone).child("name")
+             ref.addListenerForSingleValueEvent(object :ValueEventListener{
+                 override fun onDataChange(snapshot: DataSnapshot) {
+                     val name = snapshot.value.toString()
+                     binding.genderTitle.text = "From $name"
+                 }
+
+                 override fun onCancelled(error: DatabaseError) {
+
+                 }
+
+             })
+
+    }
+    fun getPaymentStatus(phone:String,from:String){
+
+        val sdf = SimpleDateFormat("dd-MM-yyyy HH:mm:ss")
+        val currentDateAndTime: String = sdf.format(Date())
+        val database =
+            Firebase.database("https://gossy-fbbcf-default-rtdb.asia-southeast1.firebasedatabase.app/").reference.child(
+                "payments"
+            )
+        database.child(phone).addValueEventListener(object :ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                // Toast.makeText(this@FireModeActivity, "$phone", Toast.LENGTH_SHORT).show()
+                if (snapshot.exists()){
+
+
+                    val data = snapshot.getValue(PremiumModel::class.java)
+                    //  Toast.makeText(this@FireModeActivity, "$data", Toast.LENGTH_SHORT).show()
+
+                    if (data?.status.toString().equals("nice")){
+                        if (compareDates(data?.date.toString(),currentDateAndTime)<0){
+                           ///get name
+                            getUser(from)
+
+                        }else{
+                           //intent to Firemode
+
+                            val intent = Intent(this@SeeThePollActivity, FireModeActivity::class.java)
+                            startActivity(intent)
+                        }
+
+                    }else if (data?.status.toString().equals("reject")){
+                        val intent = Intent(this@SeeThePollActivity, FireModeActivity::class.java)
+                        startActivity(intent)
+                        //intent to firemode
+                    }
+
+                    else{
+                        val intent = Intent(this@SeeThePollActivity, FireModeActivity::class.java)
+                        startActivity(intent)
+
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+
+        })
+    }
+    fun compareDates(dateText1: String, dateText2: String): Int {
+        val pattern = "dd-MM-yyyy HH:mm:ss"
+        val dateFormat = SimpleDateFormat(pattern)
+
+        val date1: Date = dateFormat.parse(dateText1) ?: Date()
+        val date2: Date = dateFormat.parse(dateText2) ?: Date()
+
+        return date1.compareTo(date2)
     }
 }

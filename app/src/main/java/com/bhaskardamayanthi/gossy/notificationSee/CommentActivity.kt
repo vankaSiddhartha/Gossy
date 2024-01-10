@@ -1,6 +1,7 @@
 package com.bhaskardamayanthi.gossy.notificationSee
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -8,6 +9,7 @@ import androidx.annotation.RequiresApi
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import cn.pedant.SweetAlert.SweetAlertDialog
+import com.bhaskardamayanthi.gossy.MainActivity
 import com.bhaskardamayanthi.gossy.R
 import com.bhaskardamayanthi.gossy.databinding.ActivityCommmentBinding
 import com.bhaskardamayanthi.gossy.databinding.FragmentCommentBinding
@@ -43,23 +45,11 @@ class CommentActivity : AppCompatActivity() {
         val parentNumber = intent.getStringExtra("number")
         val token = intent.getStringExtra("token")
         binding.replyTextView.setText( "Replying to @"+fakeName)
-//        shareDataInFragmentViewModel.sharedData.observe(this){fakeName->
-//
-//            parentFakeName = fakeName
-//
-//
-//        }
-//        shareDataInFragmentViewModel.getParentPostId.observe(this){getParentPostId->
-//            parentId = getParentPostId
-//        }
-//        shareDataInFragmentViewModel.getParentTokenId.observe(this){getParentToken->
-//            parentToken = getParentToken
-//
-//        }
+
         binding.cancelBtn.setOnClickListener {
 
-//            val fm: FragmentManager = requireActivity().supportFragmentManager
-//            fm.popBackStack()
+        //startActivity(Intent(this,MainActivity::class.java))
+            finish()
 
         }
         binding.replyBtn.setOnClickListener {

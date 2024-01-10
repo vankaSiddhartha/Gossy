@@ -74,6 +74,7 @@ class NotificationAdapter(val context:Context,val list:MutableList<NotificationM
                 val intent = Intent(context, SeeThePollActivity::class.java)
                 intent.putExtra("question", list[position].message)
                 intent.putExtra("sex", list[position].title)
+                intent.putExtra("from",list[position].from)
                 context.startActivity(intent)
             }else if (list[position].type =="like"){
                 val intent = Intent(context, SeeLikePostActivity::class.java)

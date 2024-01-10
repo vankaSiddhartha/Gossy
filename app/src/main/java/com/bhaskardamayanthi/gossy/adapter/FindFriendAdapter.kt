@@ -35,10 +35,14 @@ import kotlin.properties.Delegates
 class FindFriendAdapter(val context:Context):RecyclerView.Adapter<FindFriendAdapter.ViewHolder>() {
     var list = mutableListOf<UserModel>()
     var contactsList = emptyList<Contact>()
+    var friendsList = listOf<UserModel>()
 
     fun updateData(data: MutableList<UserModel>){
         list = data
         notifyDataSetChanged()
+    }
+    fun  getFriends(data:List<UserModel>){
+        friendsList= data
     }
     fun removeItem(position: Int) {
      // list.removeAt(position)
@@ -56,7 +60,7 @@ class FindFriendAdapter(val context:Context):RecyclerView.Adapter<FindFriendAdap
     }
 
     override fun getItemCount(): Int {
-      return  list.size
+      return friendsList.size
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -68,27 +72,27 @@ class FindFriendAdapter(val context:Context):RecyclerView.Adapter<FindFriendAdap
         val storeManager = StoreManager(context)
         val userName = storeManager.getString("fakeName", "")
         val number = storeManager.getString("number", "")
-        geTfromFirebaseManager.checkIfFriend(number, list[position].phone.toString()) { value ->
+        geTfromFirebaseManager.checkIfFriend(number, friendsList[position].phone.toString()) { value ->
             if (value) {
                 holder.binding.userAddSearch.visibility = View.INVISIBLE
 
             }
-            if (list[position].profile.toString().isEmpty()){
-                val initial = getProfileInitial(list[position].name.toString())
+              if (friendsList[position].profile.toString().isEmpty()){
+                val initial = getProfileInitial(friendsList[position].name.toString())
 
 
-                holder.binding.userNameSearch.text = list[position].name
+                holder.binding.userNameSearch.text = friendsList[position].name
                 val textColor = Color.GRAY // Text color
                 val backgroundColor = getRandomColor() // Random background color
                 val bitmap = textAsBitmap(initial, 20f, textColor, backgroundColor)
                 holder.binding.userProfileSearch.setImageBitmap(bitmap)
             }else{
-                holder.binding.userNameSearch.text = list[position].name
-                Glide.with(context).load(list[position].profile).into(holder.binding.userProfileSearch)
+                holder.binding.userNameSearch.text = friendsList[position].name
+                Glide.with(context).load(friendsList[position].profile).into(holder.binding.userProfileSearch)
             }
 
             holder.binding.userAddSearch.setOnClickListener {
-                firebaseDataManager.addFriends(number, list[position].phone.toString(), context)
+                firebaseDataManager.addFriends(number, friendsList[position].phone.toString(), context)
                 removeItem(position)
 
             }

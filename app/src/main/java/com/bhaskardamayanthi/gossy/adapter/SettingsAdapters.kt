@@ -3,11 +3,14 @@ package com.bhaskardamayanthi.gossy.adapter
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Color
+import android.net.Uri
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bhaskardamayanthi.gossy.MainActivity
 import com.bhaskardamayanthi.gossy.databinding.SettingItemBinding
@@ -87,6 +90,15 @@ class SettingsAdapters(
                 context.startActivity(Intent(context,FireModeActivity::class.java))
                 //context.startActivity(Intent(context,TestActivity::class.java))
             }
+            if(currentKey=="Twitter"){
+              openTwitterProfile()
+            }
+            if(currentKey=="Instagram"){
+                openInstagramProfile()
+            }
+            if (currentKey=="LinkedIn"){
+                openLinkedInPage()
+            }
         }
 
 
@@ -99,5 +111,59 @@ class SettingsAdapters(
 
     override fun getItemCount(): Int {
         return  settingsData.size
+    }
+  private  fun openInstagramProfile() {
+        val instagramProfile = "https://www.instagram.com/gossylovesyou/"
+        val appUri = Uri.parse(instagramProfile)
+        val intent = Intent(Intent.ACTION_VIEW)
+
+        intent.data = if (isAppInstalled("com.instagram.android")) {
+            appUri
+        } else {
+            Uri.parse(instagramProfile)
+        }
+
+        intent.setPackage("com.instagram.android")
+
+        context.startActivity(intent)
+    }
+   private fun openTwitterProfile() {
+        val twitterProfile = "https://twitter.com/gossylovesyou"
+        val appUri = Uri.parse(twitterProfile)
+        val intent = Intent(Intent.ACTION_VIEW)
+
+        intent.data = if (isAppInstalled("com.twitter.android")) {
+            appUri
+        } else {
+            Uri.parse(twitterProfile)
+        }
+
+        intent.setPackage("com.twitter.android")
+
+        context.startActivity(intent)
+    }
+    private fun isAppInstalled(packageName: String): Boolean {
+        val pm = context.packageManager
+        return try {
+            pm.getPackageInfo(packageName, 0)
+            true
+        } catch (e: PackageManager.NameNotFoundException) {
+            false
+        }
+    }
+   private fun openLinkedInPage() {
+        val linkedInProfile = "https://www.linkedin.com/company/gossy-the-perfect-social-app/about/?viewAsMember=true"
+        val appUri = Uri.parse(linkedInProfile)
+        val intent = Intent(Intent.ACTION_VIEW)
+
+        intent.data = if (isAppInstalled("com.linkedin.android")) {
+            appUri
+        } else {
+            Uri.parse(linkedInProfile)
+        }
+
+        intent.setPackage("com.linkedin.android")
+
+        context.startActivity(intent)
     }
 }

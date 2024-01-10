@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.net.Uri
@@ -37,81 +38,84 @@ import java.util.UUID
 
 class ChangeProfileFragment : Fragment() {
 
-private lateinit var binding:FragmentChangeProfileBinding
-  private lateinit var storeManager:StoreManager
+    private lateinit var binding: FragmentChangeProfileBinding
+    private lateinit var storeManager: StoreManager
     private val storage = FirebaseStorage.getInstance()
     private val storageReference = storage.reference
-    private lateinit var myProfile:String
-    private lateinit var selectedImgUri:Uri
-    private var permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { map ->
-        var isGranted = true
-        for (item in map) {
-            if (!item.value) {
-                isGranted = false
+    private lateinit var myProfile: String
+    private lateinit var selectedImgUri: Uri
+    private var permissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { map ->
+            var isGranted = true
+            for (item in map) {
+                if (!item.value) {
+                    isGranted = false
+                }
+            }
+            if (isGranted) {
+                openGallery() // If permissions granted, open the gallery to pick an image
+            } else {
+                Toast.makeText(requireContext(), "Permission is denied", Toast.LENGTH_SHORT).show()
+                openAppSettings(requireContext())
             }
         }
-        if (isGranted) {
-            openGallery() // If permissions granted, open the gallery to pick an image
-        } else {
-            Toast.makeText(requireContext(), "Permission is denied", Toast.LENGTH_SHORT).show()
-            openAppSettings(requireContext())
-        }
-    }
 
     // Pick image result launcher
-    private val pickImageLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            val data: Intent? = result.data
-            val selectedImageUri = data?.data
-            binding.circleImageView.setImageURI(selectedImageUri)
-            if (selectedImageUri != null) {
-                selectedImgUri = selectedImageUri
-            }else{
-                Toast.makeText(requireContext(), "Select again", Toast.LENGTH_SHORT).show()
+    private val pickImageLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data: Intent? = result.data
+                val selectedImageUri = data?.data
+                binding.circleImageView.setImageURI(selectedImageUri)
+                if (selectedImageUri != null) {
+                    selectedImgUri = selectedImageUri
+
+                } else {
+                    Toast.makeText(requireContext(), "Select again", Toast.LENGTH_SHORT).show()
+                }
+                //    uploadImageToFirebase(selectedImageUri, requireContext())
             }
-        //    uploadImageToFirebase(selectedImageUri, requireContext())
         }
-    }
-     override fun onCreateView(
+
+    override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
-         selectedImgUri = Uri.EMPTY
-         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-             navigateToMainActivity()
-         }
-         binding = FragmentChangeProfileBinding.inflate(layoutInflater,container,false)
-          storeManager = StoreManager(requireContext())
-         val profile = storeManager.getString("profile","")
-         myProfile = profile
-         val name = storeManager.getString("name","")
-         if (profile.isEmpty()){
-             val bitmap = NameToProfileManager.textAsBitmap( name,20f, Color.BLACK, Color.WHITE)
-             binding.circleImageView.setImageBitmap(bitmap)
-         }else{
-             Glide.with(requireActivity()).load(profile).into(binding.circleImageView)
-         }
-         binding.goGalleryBtn.setOnClickListener {
-             readPermission()
-         }
-         binding.changeProfile.setOnClickListener {
-             readPermission()
-         }
-         binding.circleImageView.setOnClickListener {
-             readPermission()
-         }
-         binding.upload.setOnClickListener {
-             uploadImageToFirebase(selectedImgUri,requireContext())
-         }
+        selectedImgUri = Uri.EMPTY
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            navigateToMainActivity()
+        }
+        binding = FragmentChangeProfileBinding.inflate(layoutInflater, container, false)
+        storeManager = StoreManager(requireContext())
+        val profile = storeManager.getString("profile", "")
+        myProfile = profile
+        val name = storeManager.getString("name", "")
+        if (profile.isEmpty()) {
+            val bitmap = NameToProfileManager.textAsBitmap(name, 20f, Color.BLACK, Color.WHITE)
+            binding.circleImageView.setImageBitmap(bitmap)
+        } else {
+            Glide.with(requireActivity()).load(profile).into(binding.circleImageView)
+        }
+        binding.goGalleryBtn.setOnClickListener {
+            readPermission()
+        }
+        binding.changeProfile.setOnClickListener {
+            readPermission()
+        }
+        binding.circleImageView.setOnClickListener {
+            readPermission()
+        }
+        binding.upload.setOnClickListener {
+            uploadImageToFirebase(selectedImgUri, requireContext())
+        }
         return binding.root
     }
 
     fun uploadImageToFirebase(imageUri: Uri, requireContext: Context) {
 
-        val number = storeManager.getString("number","")
+        val number = storeManager.getString("number", "")
         Loading.showAlertDialogForLoading(requireContext())
-
 
 
         // Create a storage reference for the image with a unique name
@@ -123,11 +127,11 @@ private lateinit var binding:FragmentChangeProfileBinding
                 // Once the image is successfully uploaded, get its download URL
                 storageRef.downloadUrl.addOnSuccessListener { imgLink ->
                     myProfile = imgLink.toString()
-                  //  Loading.dismissDialogForLoading()
+                    //  Loading.dismissDialogForLoading()
                     // Glide.with(requireContext).load(imgLink).into(binding.circleImageView)
 
-                    storeManager.saveString("profile",imgLink.toString())
-                    updateProfile(number,imgLink.toString())
+                    storeManager.saveString("profile", imgLink.toString())
+                    updateProfile(number, imgLink.toString())
 
 
                 }
@@ -138,6 +142,7 @@ private lateinit var binding:FragmentChangeProfileBinding
                 Loading.dismissDialogForLoading()
             }
     }
+
     private fun readPermission() {
         val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             arrayOf(android.Manifest.permission.READ_MEDIA_IMAGES)
@@ -155,18 +160,25 @@ private lateinit var binding:FragmentChangeProfileBinding
 
     // Method to check if a permission is granted
     private fun hasPermissionCheck(permission: String): Boolean {
-        return ContextCompat.checkSelfPermission(requireContext(), permission) == PackageManager.PERMISSION_GRANTED
+        return ContextCompat.checkSelfPermission(
+            requireContext(),
+            permission
+        ) == PackageManager.PERMISSION_GRANTED
     }
+
     private fun openGallery() {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.type = "image/*"
         pickImageLauncher.launch(intent)
     }
 
-    private fun updateProfile(number: String,profile:String){
+    private fun updateProfile(number: String, profile: String) {
 //        Loading.showAlertDialogForLoading(requireContext())
 //        storeManager.saveString("profile",profile)
-        val database = Firebase.database("https://gossy-fbbcf-default-rtdb.asia-southeast1.firebasedatabase.app/").reference.child("users")
+        val database =
+            Firebase.database("https://gossy-fbbcf-default-rtdb.asia-southeast1.firebasedatabase.app/").reference.child(
+                "users"
+            )
         database.child(number).child("profile").setValue(profile).addOnSuccessListener {
             Toast.makeText(requireContext(), "Profile is updated!!", Toast.LENGTH_SHORT).show()
             Loading.dismissDialogForLoading()
@@ -174,11 +186,13 @@ private lateinit var binding:FragmentChangeProfileBinding
     }
 
     fun openAppSettings(context: Context) {
+        Toast.makeText(requireContext(), "give permission", Toast.LENGTH_SHORT).show()
         val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
         val uri = Uri.fromParts("package", context.packageName, null)
         intent.data = uri
         startActivityForResult(intent, 10001)
     }
+
     private fun navigateToMainActivity() {
         val intent = Intent(requireContext(), MainActivity::class.java)
         startActivity(intent)
