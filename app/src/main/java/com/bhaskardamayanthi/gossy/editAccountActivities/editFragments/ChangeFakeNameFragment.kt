@@ -44,6 +44,7 @@ private lateinit var storeManager: StoreManager
             Loading.showAlertDialogForLoading(requireContext())
             updateFakeName(number,binding.fakename.text.toString())
         }
+
         return binding.root
     }
     private fun genrateName(): String {
