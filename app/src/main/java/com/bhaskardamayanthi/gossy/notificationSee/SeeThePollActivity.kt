@@ -23,6 +23,7 @@ import com.bhaskardamayanthi.gossy.MainActivity
 import com.bhaskardamayanthi.gossy.R
 import com.bhaskardamayanthi.gossy.databinding.ActivitySeetThePollBinding
 import com.bhaskardamayanthi.gossy.fireMode.FireModeActivity
+import com.bhaskardamayanthi.gossy.loading.Loading
 import com.bhaskardamayanthi.gossy.localStore.StoreManager
 import com.bhaskardamayanthi.gossy.model.PremiumModel
 import com.google.firebase.database.DataSnapshot
@@ -86,11 +87,12 @@ class SeeThePollActivity : AppCompatActivity() {
 
 
         binding.snapchat.setOnClickListener {
-
+            Loading.showAlertDialogForLoading(this)
             takeScreenshotAndShareToSnapchat()
            // permission()
         }
         binding.instagram.setOnClickListener {
+            Loading.showAlertDialogForLoading(this)
             takeScreenshotAndShareToInstagram()
         }
         binding.firemode.setOnClickListener {
@@ -106,16 +108,7 @@ class SeeThePollActivity : AppCompatActivity() {
 
     }
 
-//    private fun takeScreenshotAndShareToInstagram() {
-//        val rootView: View = window.decorView.rootView
-//
-//        // Capture the current screen content as a bitmap
-//        rootView.isDrawingCacheEnabled = true
-//        val screenshotBitmap = Bitmap.createBitmap(rootView.drawingCache)
-//        rootView.isDrawingCacheEnabled = false
-//        // Share the screenshot to Instagram Stories
-//        shareToInstagramStory(screenshotBitmap)
-//    }
+
 private fun takeScreenshotAndShareToInstagram() {
 
     val rootView: View = window.decorView.rootView
@@ -146,40 +139,15 @@ private fun takeScreenshotAndShareToInstagram() {
 
         // Verify if Instagram is installed
         if (intent.resolveActivity(packageManager) != null) {
+            Loading.dismissDialogForLoading()
             startActivity(intent)
         } else {
-            // Instagram is not installed, handle this case
-            // Prompt the user to install Instagram from the Play Store
-         //   Toast.makeText(this, "nooo", Toast.LENGTH_SHORT).show()
+            Loading.dismissDialogForLoading()
+            Toast.makeText(this, "Instagram is not installed!!", Toast.LENGTH_SHORT).show()
         }
     }
 
-//    private fun getImageUri(bitmap: Bitmap): Uri? {
-//        val imagesCollection =
-//            MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
-//
-//        val contentValues = ContentValues().apply {
-//            put(MediaStore.Images.Media.DISPLAY_NAME, "screenshot") // Set your desired display name
-//            put(MediaStore.Images.Media.MIME_TYPE, "image/png") // Set appropriate MIME type
-//        }
-//
-//        // Create a write request to insert an image into MediaStore
-//        val imageUri = contentResolver.insert(imagesCollection, contentValues)
-//
-//        return imageUri?.let { uri ->
-//            try {
-//                contentResolver.openOutputStream(uri)?.use { outputStream ->
-//                    // Compress bitmap and write it to the output stream
-//                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
-//                }
-//                uri // Return the URI if the image is successfully saved
-//            } catch (e: IOException) {
-//                e.printStackTrace()
-//                null // Return null if there's an exception while writing the image
-//            }
-//        }
-//    }
-//
+
 private fun getImageUri(bitmap: Bitmap): Uri? {
     val displayName = "screenshot" // Set your desired display name
     val mimeType = "image/png" // Set appropriate MIME type
@@ -236,15 +204,17 @@ private fun getImageUri(bitmap: Bitmap): Uri? {
 
         // Verify if Snapchat is installed
         if (intent.resolveActivity(packageManager) != null) {
+            Loading.dismissDialogForLoading()
             startActivity(intent)
+
         } else {
-            // Snapchat is not installed, handle this case
-            // Prompt the user to install Snapchat from the Play Store
+            Loading.dismissDialogForLoading()
+            Toast.makeText(this, "Install Snapchat!!", Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun takeScreenshotAndShareToSnapchat() {
-    permission()
+      //  permission()
         val rootView: View = window.decorView.rootView
 
         // Create a bitmap of the current screen content

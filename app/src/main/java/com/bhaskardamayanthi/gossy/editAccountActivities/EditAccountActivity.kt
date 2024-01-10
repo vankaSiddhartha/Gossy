@@ -48,7 +48,7 @@ class EditAccountActivity : AppCompatActivity() {
         }
     }
     private fun navigateToMainActivity() {
-       finish() 
+       finish()
 
     }
 }
