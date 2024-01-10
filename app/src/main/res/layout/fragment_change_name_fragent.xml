@@ -16,7 +16,7 @@
         android:layout_margin="10dp"
         android:hint="Your name"
         android:layout_marginTop="10dp"
-        android:text="This is how you appear in Gossy, so pick a name that your friends know you by."
+        android:text="This is how you appear in Search, so pick a name that your friends know you by."
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
